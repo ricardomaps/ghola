@@ -1,0 +1,29 @@
+(library
+ (name river)
+ (libraries wayland))
+
+(rule
+ (targets
+  river_window_management_v1_proto.ml
+  river_window_management_v1_server.ml
+  river_window_management_v1_client.ml)
+ (deps protocols/river-window-management-v1.xml)
+ (action
+  (run
+   wayland-scanner-ocaml
+   --open
+   Wayland.Wayland_proto
+   protocols/river-window-management-v1.xml)))
+
+(rule
+ (targets
+  river_xkb_bindings_v1_proto.ml
+  river_xkb_bindings_v1_server.ml
+  river_xkb_bindings_v1_client.ml)
+ (deps protocols/river-xkb-bindings-v1.xml)
+ (action
+  (run
+   wayland-scanner-ocaml
+   --open
+   River_window_management_v1_proto
+   protocols/river-xkb-bindings-v1.xml)))
