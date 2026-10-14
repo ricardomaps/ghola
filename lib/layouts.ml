@@ -19,8 +19,8 @@ module Mirror (L : Layout.S) = struct
   let description l = "Mirror " ^ L.description l
   let handle_message = L.handle_message
 
-  let run_layout wm w r =
-    let rs, u = L.run_layout wm w r in
+  let run_layout wm workspace rect =
+    let rs, u = L.run_layout wm workspace rect in
     let rs = List.map (fun (r, w) -> Rect.mirror r, w) rs in
     rs, u
   ;;
@@ -160,22 +160,21 @@ module Choose (L : Layout.S) (R : Layout.S) = struct
     | message ->
       (match current with
        | CL ->
-         Option.map (fun left -> { layout with left }) (L.handle_message wm left message)
+         L.handle_message wm left message |> Option.map (fun left -> { layout with left })
        | CR ->
-         Option.map
-           (fun right -> { layout with right })
-           (R.handle_message wm right message))
+         R.handle_message wm right message
+         |> Option.map (fun right -> { layout with right }))
   ;;
 end
 
-let full : layout = make_layout_instance (module Full) ()
+let full : layout = Layout ((module Full), ())
 
 let tall nmaster ratio_increment ratio =
   let l : Tall.t = { nmaster; ratio; ratio_increment } in
-  make_layout_instance (module Tall) l
+  Layout ((module Tall), l)
 ;;
 
-let mirror (Layout ((module L), l)) = make_layout_instance (module Mirror (L)) l
+let mirror (Layout ((module L), l)) = Layout ((module Mirror (L)), l)
 
 let ( ||| ) (Layout ((module L), l)) (Layout ((module R), r)) =
   let module F = Choose (L) (R) in

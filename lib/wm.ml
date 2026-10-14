@@ -49,8 +49,4 @@ end =
 
 include Types
 
-let make_layout_instance (type a) (module L : Layout.S with type t = a) (l : a) =
-  Layout ((module L), l)
-;;
-
 type message += ReleaseResources | Hide
