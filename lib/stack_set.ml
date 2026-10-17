@@ -4,14 +4,15 @@ type ('a, 'l, 'i) workspace =
   ; stack : 'a Stack.t option
   }
 
-type ('a, 'l, 'i, 'o) screen =
+type ('a, 'l, 'i, 'd, 'id) screen =
   { workspace : ('a, 'l, 'i) workspace
-  ; output : 'o
+  ; dimensions : 'd
+  ; id : 'id
   }
 
-type ('a, 'l, 'i, 'o) t =
-  { current : ('a, 'l, 'i, 'o) screen
-  ; visible : ('a, 'l, 'i, 'o) screen list
+type ('a, 'l, 'i, 'd, 'id) t =
+  { current : ('a, 'l, 'i, 'd, 'id) screen
+  ; visible : ('a, 'l, 'i, 'd, 'id) screen list
   ; hidden : ('a, 'l, 'i) workspace list
   }
 
@@ -33,15 +34,16 @@ module Workspace = struct
   ;;
 end
 
-let create layout tags outputs =
-  let n = List.length outputs in
+let create layout tags dimensions =
+  let n = List.length dimensions in
   if n = 0 || n < List.length tags
   then invalid_arg "non-positive argument to Stack_set.create"
   else (
     let workspaces = List.map (fun tag -> { layout; tag; stack = None }) tags in
     let seen, hidden = List.(take n workspaces, drop n workspaces) in
     let screens =
-      List.map2 (fun workspace output -> { workspace; output }) seen outputs
+      List.combine seen dimensions
+      |> List.mapi (fun id (workspace, dimensions) -> { workspace; dimensions; id })
     in
     { current = List.hd screens; visible = List.tl screens; hidden })
 ;;
@@ -82,9 +84,9 @@ let insert_up window stack_set =
     ~some:(fun stack -> Some (Stack.insert_up window stack))
 ;;
 
-let lookup_workspace output stack_set =
+let lookup_workspace id stack_set =
   screens stack_set
-  |> List.find_opt (fun scr -> scr.output = output)
+  |> List.find_opt (fun scr -> scr.id = id)
   |> Option.map (fun scr -> scr.workspace.tag)
 ;;
 

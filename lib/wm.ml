@@ -1,14 +1,27 @@
 type keybinding = [ `V2 ] River.River_xkb_bindings_v1_client.River_xkb_binding_v1.t
+type river_seat = [`V4] River.River_window_management_v1_client.River_seat_v1.t
 type modifier = River.River_window_management_v1_client.River_seat_v1.Modifiers.t
 type river_output = [ `V4 ] River.River_window_management_v1_client.River_output_v1.t
 type river_window = [ `V4 ] River.River_window_management_v1_client.River_window_v1.t
 
 type output =
   { proxy : river_output
-  ; dimensions : Rect.t
+  ; mutable dimensions : Rect.t
   }
 
-type window = { proxy : river_window }
+type window =
+  { proxy : river_window
+  ; mutable dimensions : Rect.t
+  ; mutable title : string option
+  ; mutable app_id : string option
+  ; mutable identifier : string option
+  ; mutable parent : window option
+  }
+
+type seat =
+  { proxy : river_seat
+  ; mutable bindings : keybinding list
+  }
 
 module rec Types : sig
   type message = ..
@@ -19,7 +32,7 @@ module rec Types : sig
 
   and wm =
     { config : config
-    ; mutable window_set : (window, layout, string, output) Stack_set.t
+    ; mutable window_set : (window, layout, string, Rect.t, int) Stack_set.t
     }
 
   and config =
