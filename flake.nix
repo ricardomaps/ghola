@@ -32,7 +32,7 @@
               wayland
               eio
               eio_main
-              base
+              containers
             ];
 
             propagatedBuildInputs = with ocamlPackages; [
@@ -41,7 +41,7 @@
               ocaml
               xkbcommon
               wayland
-              base
+              containers
             ];
           };
         });

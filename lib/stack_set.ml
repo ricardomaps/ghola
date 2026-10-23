@@ -1,120 +1,149 @@
-type ('a, 'l, 'i) workspace =
-  { tag : 'i
+open Containers
+
+type ('a, 'l) workspace =
+  { tag : string
   ; layout : 'l
-  ; stack : 'a Stack.t option
+  ; stack : 'a Zipper.t option
   }
 
-type ('a, 'l, 'i, 'd, 'id) screen =
-  { workspace : ('a, 'l, 'i) workspace
-  ; dimensions : 'd
-  ; id : 'id
+type ('a, 'l, 'o) screen =
+  { workspace : ('a, 'l) workspace
+  ; output : 'o
   }
 
-type ('a, 'l, 'i, 'd, 'id) t =
-  { current : ('a, 'l, 'i, 'd, 'id) screen
-  ; visible : ('a, 'l, 'i, 'd, 'id) screen list
-  ; hidden : ('a, 'l, 'i) workspace list
+type ('a, 'l, 'o) t =
+  { visible : ('a, 'l, 'o) screen list
+  ; hidden : ('a, 'l) workspace list
   }
 
 module Workspace = struct
-  let windows workspace = Option.fold ~none:[] ~some:Stack.to_list workspace.stack
+  let windows workspace = Option.map_or ~default:[] Zipper.to_list workspace.stack
 
   let delete window workspace =
-    { workspace with stack = Option.bind workspace.stack (Stack.filter (( != ) window)) }
+    { workspace with
+      stack = Option.bind workspace.stack (Zipper.filter (Stdlib.( != ) window))
+    }
   ;;
 
   let insert_up window workspace =
     { workspace with
       stack =
-        Option.fold
-          ~none:(Some (Stack.singleton window))
-          ~some:(fun w -> Some (Stack.insert_up window w))
+        Option.map_or
+          ~default:(Some (Zipper.singleton window))
+          (fun w -> Some (Zipper.insert_up window w))
           workspace.stack
     }
   ;;
 end
 
-let create layout tags dimensions =
-  let n = List.length dimensions in
-  if n = 0 || n < List.length tags
-  then invalid_arg "non-positive argument to Stack_set.create"
+let create layout tags outputs =
+  if List.is_empty tags
+  then invalid_arg "Stack_set.create called with empty tag list"
   else (
-    let workspaces = List.map (fun tag -> { layout; tag; stack = None }) tags in
-    let seen, hidden = List.(take n workspaces, drop n workspaces) in
-    let screens =
-      List.combine seen dimensions
-      |> List.mapi (fun id (workspace, dimensions) -> { workspace; dimensions; id })
-    in
-    { current = List.hd screens; visible = List.tl screens; hidden })
+    let workspaces = List.map (fun tag -> { tag; layout; stack = None }) tags in
+    let seen, hidden = List.take_drop (List.length outputs) workspaces in
+    let visible = List.map2 (fun workspace ouput -> { workspace; output }) seen outputs in
+    { visible; hidden })
 ;;
 
-let fold_stack stack_set ~none ~some =
-  Option.fold ~none ~some stack_set.current.workspace.stack
+(* TODO: think about what to do when there are more screens than workspaces *)
+let add_screen output stack_set =
+  let screen = { output; workspace = List.hd stack_set.hidden } in
+  { visible = screen :: stack_set.visible; hidden = List.tl stack_set.hidden }
 ;;
 
-let update_stack stack_set ~none ~some =
-  let stack = fold_stack ~none ~some stack_set in
-  let workspace = { stack_set.current.workspace with stack } in
-  let current = { stack_set.current with workspace } in
-  { stack_set with current }
+let remove_screen output stack_set =
+  let screen =
+    List.find (fun screen -> screen.output Stdlib.( == ) output) stack_set.visible
+  in
+  let visible =
+    List.filter (fun screen -> screen.output Stdlib.( != ) output) stack_set.visible
+  in
+  { visible; hidden = screen.workspace :: stack_set.hidden }
 ;;
 
-let map_stack f = update_stack ~none:None ~some:(fun stack -> Some (f stack))
-let peek = fold_stack ~none:None ~some:(fun stack -> Some stack.focus)
-let screens stack_set = stack_set.current :: stack_set.visible
+let current_workspace { visible; hidden } =
+  match visible with
+  | [] -> List.hd hidden
+  | curr :: _ -> curr.workspace
+;;
+
+let fold_stack f stack_set ~default =
+  match stack_set.visible with
+  | current :: rest -> Option.map_or ~default f current.workspace.stack
+  | [] ->
+    let current = List.hd stack_set.hidden in
+    Option.map_or ~default f current.stack
+;;
+
+let update_stack f stack_set ~default =
+  match stack_set.visible with
+  | current :: rest ->
+    let stack = Option.map_or ~default f current.workspace.stack in
+    let workspace = { current.workspace with stack } in
+    let current = { current with workspace } in
+    { stack_set with visible = current :: rest }
+  | [] ->
+    let current, rest = List.hd_tl stack_set.hidden in
+    let stack = Option.map_or ~default f current.stack in
+    let current = { current with stack } in
+    { stack_set with hidden = current :: rest }
+;;
+
+let map_stack f = update_stack ~default:None (fun stack -> Some (f stack))
+
+let peek stack_set =
+  let current = current_workspace stack_set in
+  Option.map (fun (stack : _ Zipper.t) -> stack.focus) current.stack 
+;;
 
 let workspaces stack_set =
-  let hidden = stack_set.hidden in
-  let current = stack_set.current.workspace in
-  let visible = List.map (fun s -> s.workspace) stack_set.visible in
-  (current :: visible) @ hidden
+  let seen = CCList.map (fun screen -> screen.workspace) stack_set.visible in
+  seen @ stack_set.hidden
 ;;
 
-let current_tag stack_set = stack_set.current.workspace.tag
-let current_windows = fold_stack ~none:[] ~some:Stack.to_list
+let current_tag stack_set =
+  let current = current_workspace stack_set in
+  current.tag
+;;
+
 let all_windows stack_set = workspaces stack_set |> List.concat_map Workspace.windows
-let focus_up stack_set = map_stack Stack.focus_up stack_set
-let focus_down stack_set = map_stack Stack.focus_down stack_set
-let swap_up stack_set = map_stack Stack.swap_up stack_set
-let swap_down stack_set = map_stack Stack.swap_down stack_set
+let focus_up stack_set = map_stack Zipper.focus_up stack_set
+let focus_down stack_set = map_stack Zipper.focus_down stack_set
+let swap_up stack_set = map_stack Zipper.swap_up stack_set
+let swap_down stack_set = map_stack Zipper.swap_down stack_set
 
 let insert_up window stack_set =
   update_stack
-    ~none:(Some (Stack.singleton window))
-    ~some:(fun stack -> Some (Stack.insert_up window stack))
+    ~default:(Some (Zipper.singleton window))
+    (fun stack -> Some (Zipper.insert_up window stack))
 ;;
 
-let lookup_workspace id stack_set =
-  screens stack_set
-  |> List.find_opt (fun scr -> scr.id = id)
-  |> Option.map (fun scr -> scr.workspace.tag)
+let lookup_workspace output stack_set =
+  stack_set.visible
+  |> List.find_opt (fun screen -> screen.output Stdlib.( == ) output)
+  |> Option.map (fun screen -> screen.workspace.tag)
 ;;
 
 let tag_mem tag stack_set =
-  workspaces stack_set |> List.exists (fun workspace -> tag = workspace.tag)
+  workspaces stack_set |> List.exists (fun workspace -> String.equal tag workspace.tag)
 ;;
 
-let window_mem window stack_set = all_windows stack_set |> List.memq window
-
 let map_workspaces f stack_set =
-  let aux screen = { screen with workspace = f screen.workspace } in
-  { current = aux stack_set.current
-  ; visible = List.map aux stack_set.visible
-  ; hidden = List.map f stack_set.hidden
-  }
+  let f_screen screen = { screen with workspace = f screen.workspace } in
+  { visible = List.map f_screen stack_set.visible; hidden = List.map f stack_set.hidden }
 ;;
 
 let map_layouts f stack_set =
   let f_workspace w = { w with layout = f w.layout } in
   let f_screen s = { s with workspace = f_workspace s.workspace } in
-  { current = f_screen stack_set.current
-  ; visible = List.map f_screen stack_set.visible
+  { visible = List.map f_screen stack_set.visible
   ; hidden = List.map f_workspace stack_set.hidden
   }
 ;;
 
 let rename_tag old_tag new_tag stack_set =
-  map_workspaces (fun w -> if w.tag = old_tag then { w with tag = new_tag } else w)
+  map_workspaces (fun w -> if String.equal w.tag old_tag then { w with tag = new_tag } else w)
 ;;
 
 let find_tag window stack_set =
@@ -123,47 +152,63 @@ let find_tag window stack_set =
   |> Option.map (fun workspace -> workspace.tag)
 ;;
 
-(* if a tag is used by multiple workspaces this also returns stack_set unaltered  *)
 let view tag stack_set =
-  if stack_set.current.workspace.tag = tag
-  then stack_set
-  else (
-    match List.partition (fun scr -> scr.workspace.tag = tag) stack_set.visible with
-    | [ screen ], others ->
-      { stack_set with current = screen; visible = stack_set.current :: others }
-    | _ ->
-      (match List.partition (fun w -> w.tag = tag) stack_set.hidden with
-       | [ workspace ], others ->
-         { stack_set with
-           current = { stack_set.current with workspace }
-         ; hidden = stack_set.current.workspace :: others
-         }
-       | _ -> stack_set))
+  match List.find_idx (fun scr -> String.equal scr.workspace.tag tag) stack_set.visible with
+  | Some (idx, screen) ->
+    let rest = List.remove_at_idx idx stack_set.visible in
+    { stack_set with visible = screen :: rest }
+  | None ->
+    (match List.find_idx (fun w -> String.equal w.tag tag) stack_set.hidden with
+     | None -> stack_set
+     | Some (idx, workspace) ->
+       let rest = List.remove_at_idx idx stack_set.hidden in
+       (match stack_set.visible with
+        | [] -> { stack_set with hidden = workspace :: rest }
+        | current :: visible ->
+          { visible = { current with workspace } :: visible
+          ; hidden = current.workspace :: rest
+          }))
 ;;
 
-let focus_window window stack_set =
-  let focused ss = Option.equal ( == ) (Some window) (peek ss) in
+let greedy_view tag stack_set =
+  if List.exists (fun w -> String.equal w.tag tag) stack_set.hidden
+  then view tag stack_set
+  else (
+    match List.find_idx (fun scr -> String.equal scr.workspace.tag tag) stack_set.visible with
+    | None -> stack_set
+    | Some (idx, screen) ->
+      let current = List.hd stack_set.visible in
+      let current_workspace = current.workspace in
+      let visible = List.remove_at_idx idx stack_set.visible in
+      let current = { current with workspace = screen.workspace } in
+      let screen = { screen with workspace = current_workspace } in
+      { stack_set with visible = current :: screen :: visible })
+;;
+
+let focus_window (window : 'a) (stack_set : ('a, 'b, 'c) t) =
+  let focused (ss : ('a, 'b, 'c) t) : bool = Option.equal Stdlib.( == ) (Some window) (peek ss) in
   let rec go ss = if focused ss then ss else go (focus_up ss) in
   if focused stack_set
   then Some stack_set
-  else Option.map (fun tag -> go (view tag stack_set)) (find_tag window stack_set)
+  else
+    find_tag window stack_set
+    |> Option.map (fun tag -> go (view tag stack_set)) 
 ;;
 
-let delete window stack_set =
+let remove_window window stack_set =
   let delete_from_screen s = { s with workspace = Workspace.delete window s.workspace } in
-  { current = delete_from_screen stack_set.current
-  ; visible = List.map delete_from_screen stack_set.visible
+  { visible = List.map delete_from_screen stack_set.visible
   ; hidden = List.map (Workspace.delete window) stack_set.hidden
   }
 ;;
 
 let on_workspace tag f stack_set =
-  map_workspaces (fun w -> if w.tag = tag then f w else w) stack_set
+  map_workspaces (fun w -> if String.equal w.tag tag then f w else w) stack_set
 ;;
 
 let shift_window tag window stack_set =
   match find_tag tag stack_set with
-  | Some from when from <> tag && tag_mem tag stack_set ->
+  | Some from when String.(<>) from tag && tag_mem tag stack_set ->
     stack_set
     |> on_workspace from (Workspace.delete window)
     |> on_workspace tag (Workspace.insert_up window)
@@ -173,5 +218,5 @@ let shift_window tag window stack_set =
 let shift tag stack_set =
   match peek stack_set with
   | None -> stack_set
-  | Some window -> shift_window tag window stack_set
+  | Some window -> shift_window tag window stack_set 
 ;;

@@ -1,5 +1,5 @@
 type keybinding = [ `V2 ] River.River_xkb_bindings_v1_client.River_xkb_binding_v1.t
-type river_seat = [`V4] River.River_window_management_v1_client.River_seat_v1.t
+type river_seat = [ `V4 ] River.River_window_management_v1_client.River_seat_v1.t
 type modifier = River.River_window_management_v1_client.River_seat_v1.Modifiers.t
 type river_output = [ `V4 ] River.River_window_management_v1_client.River_output_v1.t
 type river_window = [ `V4 ] River.River_window_management_v1_client.River_window_v1.t
@@ -25,14 +25,13 @@ type seat =
 
 module rec Types : sig
   type message = ..
-  type workspace_id = string
 
-  type window_space = (window, layout, workspace_id) Stack_set.workspace
+  type window_space = (window, layout) Stack_set.workspace
   and layout = Layout : (module Layout.S with type t = 'a) * 'a -> layout
 
   and wm =
     { config : config
-    ; mutable window_set : (window, layout, string, Rect.t, int) Stack_set.t
+    ; mutable window_set : (window, layout, output) Stack_set.t
     }
 
   and config =
@@ -51,7 +50,7 @@ and Layout : sig
 
     val run_layout
       :  Types.wm
-      -> (window, t, Types.workspace_id) Stack_set.workspace
+      -> (window, t) Stack_set.workspace
       -> Rect.t
       -> (Rect.t * window) list * t option
 

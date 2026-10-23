@@ -54,7 +54,7 @@ module Tall = struct
     | None -> [], None
     | Some stack ->
       let { ratio; nmaster; _ } = workspace.layout in
-      let windows = Stack.to_list stack in
+      let windows = Zipper.to_list stack in
       let rects = tile (List.length windows) nmaster ratio rect in
       List.combine rects windows, None
   ;;
