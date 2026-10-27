@@ -19,7 +19,7 @@
  (name ghola)
  (synopsis "A short synopsis")
  (description "A longer description")
- (depends ocaml containers)
+ (depends ocaml containers wayland xkbcommon)
  (tags
   ("add topics" "to describe" your project)))
 
