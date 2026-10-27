@@ -18,7 +18,6 @@ module River_pointer_binding =
 type 'a user_data =
   | Window : window -> [ `River_window_v1 ] user_data
   | Output : output -> [ `River_output_v1 ] user_data
-  | WindowManager : wm -> [ `River_window_manager_v1 ] user_data
 
 type ('a, 'role) Wayland.S.user_data +=
   | User_data : 'a user_data -> ('a, [ `Client ]) Wayland.S.user_data
@@ -55,7 +54,8 @@ let send_message message wm =
        wm.window_set
 ;;
 
-let exit_wm wm = River_window_manager.stop wm.window_manager_proxy
+let exit_wm wm =
+  River_window_manager.stop wm.window_manager_proxy
 
 let keys =
   let open River_seat.Modifiers in
@@ -75,14 +75,14 @@ let keys =
     ; (mod4, K_comma), send_message (IncMasterN 1)
     ; (mod4, K_period), send_message (IncMasterN (-1))
     ; (mod4, K_space), send_message NextLayout
-    ; (mod4 lor shift, K_ISO_Enter), spawn "alacritty"
+    ; (mod4, K_t), spawn "alacritty"
     ; (mod4 lor shift, K_q), exit_wm
     ]
 ;;
 
 let layout =
   let open Layouts in
-  let tiled_layout = Layouts.tall 1 0.5 0.03 in
+  let tiled_layout = tall 1 0.03 0.5 in
   tiled_layout ||| mirror tiled_layout ||| full
 ;;
 
@@ -90,11 +90,9 @@ let config =
   { keys
   ; workspaces = List.range 0 9 |> List.map Int.to_string
   ; layout
-  ; focus_follows_mouse = true
+  ; focus_follows_mouse = false
   }
 ;;
-
-let init_window window = ()
 
 let xkb_binding_listener wm action =
   object
@@ -133,7 +131,12 @@ let seat_listener wm seat =
   object
     inherit [_] River_seat.v4
     method bind_version = `V4
-    method on_window_interaction proxy ~window = ()
+
+    method on_window_interaction proxy ~window =
+      let (Window window) = user_data window in
+      match Window_set.focus_window window wm.window_set with
+      | Some window_set -> wm.window_set <- window_set
+      | None -> ()
 
     method on_removed _ =
       List.iter
@@ -240,17 +243,20 @@ let window_manager_listener wm =
       Wayland.Proxy.Handler.attach proxy (seat_listener wm seat);
       Queue.add (fun () -> List.iter River_xkb_binding.enable seat.bindings) wm.queue
 
-    method on_output data proxy =
+    method on_output _ proxy =
       let (lazy wm) = wm in
       let output = { proxy; dimensions = { x = 0; y = 0; w = 0; h = 0 } } in
+      wm.window_set <- Window_set.add_screen output wm.window_set;
       Wayland.Proxy.Handler.attach proxy (output_listener wm output)
 
-    method on_render_start proxy = ()
+    method on_render_start _ =
+      let (lazy wm) = wm in
+      River_window_manager.render_finish wm.window_manager_proxy
 
-    method on_manage_start proxy =
+    method on_manage_start _ =
       let (lazy wm) = wm in
       Queue.iter (fun action -> action ()) wm.queue;
-      Queue.drop wm.queue;
+      Queue.clear wm.queue;
       let rects, visible =
         List.fold_map
           (fun acc (screen : (_, _, output) Window_set.screen) ->
@@ -266,7 +272,7 @@ let window_manager_listener wm =
                     })
                  l
              in
-             rects @ acc, screen)
+             (rects @ acc), screen)
           []
           wm.window_set.visible
       in
@@ -289,12 +295,13 @@ let window_manager_listener wm =
       Window_set.all_windows wm.window_set
       |> List.filter (fun window -> not @@ List.memq window visible_windows)
       |> List.iter (fun window -> River_window.hide window.proxy);
-      match Window_set.focused_window wm.window_set with
-      | None -> ()
-      | Some window ->
-        List.iter
-          (fun (seat : seat) -> River_seat.focus_window seat.proxy ~window:window.proxy)
-          wm.seats
+      (match Window_set.focused_window wm.window_set with
+       | None -> ()
+       | Some window ->
+         List.iter
+           (fun (seat : seat) -> River_seat.focus_window seat.proxy ~window:window.proxy)
+           wm.seats);
+      River_window_manager.manage_finish wm.window_manager_proxy
 
     method on_finished _ = Stdlib.exit 0
     method on_session_unlocked _ = ()
@@ -313,6 +320,7 @@ let run env =
     lazy
       { config
       ; env
+      ; sw
       ; window_manager_proxy = Registry.bind registry (window_manager_listener wm)
       ; xkb_bindings_proxy = Registry.bind registry (new River_xkb_bindings.v2)
       ; window_set = Window_set.create config.layout config.workspaces []
@@ -320,5 +328,5 @@ let run env =
       ; seats = []
       }
   in
-  ()
+  ignore @@ Lazy.force wm
 ;;

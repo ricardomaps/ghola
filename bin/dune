@@ -1,4 +1,4 @@
 (executable
  (public_name ghola)
  (name main)
- (libraries ghola))
+ (libraries ghola eio_main))

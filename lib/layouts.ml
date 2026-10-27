@@ -20,7 +20,7 @@ module Mirror (L : Layout.S) = struct
   let handle_message = L.handle_message
 
   let run_layout wm workspace rect =
-    let rs, u = L.run_layout wm workspace rect in
+    let rs, u = L.run_layout wm workspace (Rect.mirror rect) in
     let rs = List.map (fun (r, w) -> Rect.mirror r, w) rs in
     rs, u
   ;;
@@ -39,7 +39,7 @@ module Tall = struct
 
   let tile n nmaster ratio rect =
     let open Rect in
-    if nmaster <= n || nmaster == 0
+    if nmaster >= n || nmaster = 0
     then split_vertically n rect
     else (
       (* named pupil so we stay woke *)

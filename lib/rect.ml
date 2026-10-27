@@ -8,13 +8,13 @@ type t =
 let mirror { x; y; w; h } = { x = y; y = x; w = h; h = w }
 
 let split_vertically n r =
-  let rec go n r l =
+  let rec go n r acc =
     if n < 2
-    then [ r ]
+    then List.rev @@ r :: acc
     else (
       let h = r.h / n in
       let r' = { r with y = r.y + h; h = r.h - h } in
-      go (n - 1) r' ({ r with h } :: l))
+      go (n - 1) r' ({ r with h } :: acc))
   in
   go n r []
 ;;
