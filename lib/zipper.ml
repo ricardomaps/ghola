@@ -24,7 +24,7 @@ let filter f stack =
 let mirror stack = { stack with up = stack.down; down = stack.up }
 let mirrored f stack = mirror stack |> f |> mirror
 
-let focus_first stack =
+let focus_master stack =
   match List.rev stack.up with
   | [] -> stack
   | x :: xs -> { focus = x; up = []; down = xs @ (stack.focus :: stack.down) }
@@ -33,7 +33,7 @@ let focus_first stack =
 let focus_up stack =
   match stack.up with
   | x :: xs -> { focus = x; up = xs; down = stack.focus :: stack.down }
-  | [] -> mirrored focus_first stack
+  | [] -> mirrored focus_master stack
 ;;
 
 let focus_down stack = mirrored focus_up stack
@@ -46,9 +46,9 @@ let swap_up stack =
 
 let swap_down stack = mirrored swap_up stack
 let insert_up x stack = { stack with focus = x; down = stack.focus :: stack.down }
-let shift_first stack = { stack with up = []; down = List.rev stack.up @ stack.down }
+let shift_master stack = { stack with up = []; down = List.rev stack.up @ stack.down }
 
-let swap_first stack =
+let swap_master stack =
   match List.rev stack.up with
   | [] -> stack
   | x :: xs -> { stack with up = []; down = xs @ (x :: stack.down) }
