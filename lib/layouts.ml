@@ -6,7 +6,7 @@ module Full = struct
   let description _ = "Full"
   let handle_message _ _ _ = None
 
-  let run_layout _ (workspace : _ Stack_set.workspace) rect =
+  let run_layout _ (workspace : _ Window_set.workspace) rect =
     match workspace.stack with
     | None -> [], None
     | Some stack -> [ rect, stack.focus ], None
@@ -49,7 +49,7 @@ module Tall = struct
       masters @ pupils)
   ;;
 
-  let run_layout _ (workspace : _ Stack_set.workspace) rect =
+  let run_layout _ (workspace : _ Window_set.workspace) rect =
     match workspace.stack with
     | None -> [], None
     | Some stack ->
@@ -86,7 +86,7 @@ module Choose (L : Layout.S) (R : Layout.S) = struct
     | CR -> R.description t.right
   ;;
 
-  let run_layout wm (workspace : _ Stack_set.workspace) rect =
+  let run_layout wm (workspace : _ Window_set.workspace) rect =
     let ({ current; left; right } as layout) = workspace.layout in
     match current with
     | CL ->
