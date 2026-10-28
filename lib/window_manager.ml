@@ -29,6 +29,22 @@ let user_data (proxy : ('a, _, 'role) Wayland.Proxy.t) : 'a user_data =
   | _ -> Fmt.failwith "Unexpected data attached to %a!" Wayland.Proxy.pp proxy
 ;;
 
+let all_edges =
+  let open Int32 in
+  Edges.(bottom lor top lor left lor right)
+;;
+
+(* this is a very weird function and river's color representation is also weird to me *)
+let to_river_color rgba =
+  let r = (rgba lsr 24) land 0xff in
+  let g = (rgba lsr 16) land 0xff in
+  let b = (rgba lsr 8) land 0xff in
+  let a = rgba land 0xff in
+  let premul c = ((c * a) + 127) / 255 in
+  let widen v = Int32.mul (Int32.of_int v) 0x01010101l in
+  widen (premul r), widen (premul g), widen (premul b), widen a
+;;
+
 let spawn cmd wm =
   Eio.Process.run
     wm.env#process_mgr
@@ -54,8 +70,7 @@ let send_message message wm =
        wm.window_set
 ;;
 
-let exit_wm wm =
-  River_window_manager.stop wm.window_manager_proxy
+let exit_wm wm = River_window_manager.stop wm.window_manager_proxy
 
 let keys =
   let open River_seat.Modifiers in
@@ -91,6 +106,9 @@ let config =
   ; workspaces = List.range 0 9 |> List.map Int.to_string
   ; layout
   ; focus_follows_mouse = false
+  ; border_width = 2
+  ; normal_border_color = 0
+  ; focused_border_color = 0xFF0000FF
   }
 ;;
 
@@ -119,11 +137,11 @@ let output_listener wm output =
 
     method on_position data ~x ~y =
       let x, y = Int32.(to_int x, to_int y) in
-      output.dimensions <- { output.dimensions with x; y }
+      output.geometry <- { output.geometry with x; y }
 
     method on_dimensions data ~width ~height =
       let w, h = Int32.(to_int width, to_int height) in
-      output.dimensions <- { output.dimensions with w; h }
+      output.geometry <- { output.geometry with w; h }
   end
 ;;
 
@@ -210,10 +228,9 @@ let window_manager_listener wm =
 
     method on_window data proxy =
       let (lazy wm) = wm in
-      let node = River_window.get_node proxy (new River_node.v4) in
       let window =
         { proxy
-        ; node
+        ; node = River_window.get_node proxy (new River_node.v4)
         ; dimensions = { x = 0; y = 0; w = 0; h = 0 }
         ; title = None
         ; app_id = None
@@ -222,6 +239,7 @@ let window_manager_listener wm =
         }
       in
       wm.window_set <- Window_set.insert_up window wm.window_set;
+      Queue.add (fun () -> River_window.use_ssd window.proxy) wm.queue;
       Wayland.Proxy.Handler.attach proxy (window_listener wm window)
 
     method on_seat _ proxy =
@@ -245,24 +263,26 @@ let window_manager_listener wm =
 
     method on_output _ proxy =
       let (lazy wm) = wm in
-      let output = { proxy; dimensions = { x = 0; y = 0; w = 0; h = 0 } } in
+      let empty : Rect.t = { x = 0; y = 0; w = 0; h = 0 } in
+      let output = { proxy; geometry = empty } in
       wm.window_set <- Window_set.add_screen output wm.window_set;
       Wayland.Proxy.Handler.attach proxy (output_listener wm output)
 
-    method on_render_start _ =
-      let (lazy wm) = wm in
-      River_window_manager.render_finish wm.window_manager_proxy
+    method on_render_start proxy = River_window_manager.render_finish proxy
 
+    (* TODO: this method is getting very bulky, prob needs breaking up *)
     method on_manage_start _ =
       let (lazy wm) = wm in
+      (* run the queued actions *)
       Queue.iter (fun action -> action ()) wm.queue;
       Queue.clear wm.queue;
+      (* layout and update the workspaces *)
       let rects, visible =
         List.fold_map
           (fun acc (screen : (_, _, output) Window_set.screen) ->
              let (Layout ((module L), l)) = screen.workspace.layout in
              let workspace = { screen.workspace with layout = l } in
-             let rects, l = L.run_layout wm workspace screen.output.dimensions in
+             let rects, l = L.run_layout wm workspace screen.output.geometry in
              let screen =
                Option.map_or
                  ~default:screen
@@ -272,19 +292,24 @@ let window_manager_listener wm =
                     })
                  l
              in
-             (rects @ acc), screen)
+             rects @ acc, screen)
           []
           wm.window_set.visible
       in
       wm.window_set <- { wm.window_set with visible };
+      (* set the geometry of the windows according to the layout *)
       let rects, visible_windows = List.split rects in
       List.iter2
         (fun (rect : Rect.t) window ->
            let open Int32 in
+           let bw = Int32.of_int wm.config.border_width in
            let x, y, width, height =
-             of_int rect.x, of_int rect.y, of_int rect.w, of_int rect.h
+             Int32.(
+               ( of_int rect.x + bw
+               , of_int rect.y + bw
+               , of_int rect.w - (2l * bw)
+               , of_int rect.h - (2l * bw) ))
            in
-           let all_edges = Edges.(bottom lor top lor left lor right) in
            River_window.propose_dimensions window.proxy ~width ~height;
            River_node.set_position window.node ~x ~y;
            River_window.show window.proxy;
@@ -292,12 +317,36 @@ let window_manager_listener wm =
            window.dimensions <- rect)
         rects
         visible_windows;
+      (* set the border for the windows *)
+      let r, g, b, a = to_river_color wm.config.normal_border_color in
+      List.iter
+        (fun window ->
+           River_window.set_borders
+             window.proxy
+             ~edges:all_edges
+             ~width:(Int32.of_int wm.config.border_width)
+             ~r
+             ~g
+             ~b
+             ~a)
+        visible_windows;
+      (* hide all non-visible windows *)
       Window_set.all_windows wm.window_set
       |> List.filter (fun window -> not @@ List.memq window visible_windows)
       |> List.iter (fun window -> River_window.hide window.proxy);
+      (* manage focused windowed *)
       (match Window_set.focused_window wm.window_set with
        | None -> ()
        | Some window ->
+         let r, g, b, a = to_river_color wm.config.focused_border_color in
+         River_window.set_borders
+           window.proxy
+           ~edges:all_edges
+           ~width:(Int32.of_int wm.config.border_width)
+           ~r
+           ~g
+           ~b
+           ~a;
          List.iter
            (fun (seat : seat) -> River_seat.focus_window seat.proxy ~window:window.proxy)
            wm.seats);
@@ -320,7 +369,6 @@ let run env =
     lazy
       { config
       ; env
-      ; sw
       ; window_manager_proxy = Registry.bind registry (window_manager_listener wm)
       ; xkb_bindings_proxy = Registry.bind registry (new River_xkb_bindings.v2)
       ; window_set = Window_set.create config.layout config.workspaces []

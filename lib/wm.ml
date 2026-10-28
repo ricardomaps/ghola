@@ -1,29 +1,19 @@
-type river_xkb_bindings =
-  [ `V2 ] River.River_xkb_bindings_v1_client.River_xkb_bindings_v1.t
-
-type river_window_manager =
-  [ `V4 ] River.River_window_management_v1_client.River_window_manager_v1.t
-
-type river_xkb_binding = [ `V2 ] River.River_xkb_bindings_v1_client.River_xkb_binding_v1.t
-type river_seat = [ `V4 ] River.River_window_management_v1_client.River_seat_v1.t
 type river_modifier = River.River_window_management_v1_client.River_seat_v1.Modifiers.t
-type river_output = [ `V4 ] River.River_window_management_v1_client.River_output_v1.t
-type river_window = [ `V4 ] River.River_window_management_v1_client.River_window_v1.t
-type river_node = [ `V4 ] River.River_window_management_v1_client.River_node_v1.t
 
 type seat =
-  { proxy : river_seat
-  ; mutable bindings : river_xkb_binding list
+  { proxy : [ `V4 ] River.River_window_management_v1_client.River_seat_v1.t
+  ; mutable bindings :
+      [ `V2 ] River.River_xkb_bindings_v1_client.River_xkb_binding_v1.t list
   }
 
 type output =
-  { proxy : river_output
-  ; mutable dimensions : Rect.t
+  { proxy : [ `V4 ] River.River_window_management_v1_client.River_output_v1.t
+  ; mutable geometry : Rect.t
   }
 
 type window =
-  { proxy : river_window
-  ; node : river_node
+  { proxy : [ `V4 ] River.River_window_management_v1_client.River_window_v1.t
+  ; node : [ `V4 ] River.River_window_management_v1_client.River_node_v1.t
   ; mutable dimensions : Rect.t
   ; mutable title : string option
   ; mutable app_id : string option
@@ -39,8 +29,10 @@ module rec Types : sig
 
   and wm =
     { config : config
-    ; xkb_bindings_proxy : river_xkb_bindings
-    ; window_manager_proxy : river_window_manager
+    ; xkb_bindings_proxy :
+        [ `V2 ] River.River_xkb_bindings_v1_client.River_xkb_bindings_v1.t
+    ; window_manager_proxy :
+        [ `V4 ] River.River_window_management_v1_client.River_window_manager_v1.t
     ; queue : (unit -> unit) Queue.t
     ; env : Eio_unix.Stdenv.base
     ; mutable window_set : (window, layout, output) Window_set.t
@@ -52,6 +44,9 @@ module rec Types : sig
     ; workspaces : string list
     ; layout : layout
     ; focus_follows_mouse : bool
+    ; border_width : int
+    ; normal_border_color : int
+    ; focused_border_color : int
     }
 end =
   Types
