@@ -2,13 +2,18 @@ type river_modifier = River.River_window_management_v1_client.River_seat_v1.Modi
 
 type seat =
   { proxy : [ `V4 ] River.River_window_management_v1_client.River_seat_v1.t
+  ; layer_shell_proxy :
+      [ `V1 ] River.River_layer_shell_v1_client.River_layer_shell_seat_v1.t
   ; mutable bindings :
       [ `V2 ] River.River_xkb_bindings_v1_client.River_xkb_binding_v1.t list
   }
 
 type output =
   { proxy : [ `V4 ] River.River_window_management_v1_client.River_output_v1.t
+  ; layer_shell_proxy :
+      [ `V1 ] River.River_layer_shell_v1_client.River_layer_shell_output_v1.t
   ; mutable geometry : Rect.t
+  ; mutable working_geometry : Rect.t
   }
 
 type window =
@@ -33,14 +38,16 @@ module rec Types : sig
         [ `V2 ] River.River_xkb_bindings_v1_client.River_xkb_bindings_v1.t
     ; window_manager_proxy :
         [ `V4 ] River.River_window_management_v1_client.River_window_manager_v1.t
+    ; layer_shell_proxy : [ `V1 ] River.River_layer_shell_v1_client.River_layer_shell_v1.t
     ; queue : (unit -> unit) Queue.t
     ; env : Eio_unix.Stdenv.base
     ; mutable window_set : (window, layout, output) Window_set.t
     ; mutable seats : seat list
+    ; mutable layer_focus : bool
     }
 
   and config =
-    { keys : (river_modifier * Xkbcommon.Keysym.t, wm -> unit) Hashtbl.t
+    { keys : ((river_modifier * Xkbcommon.Keysym.t) * (wm -> unit)) list
     ; workspaces : string list
     ; layout : layout
     ; focus_follows_mouse : bool

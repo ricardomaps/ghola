@@ -27,3 +27,16 @@
    --open
    River_window_management_v1_proto
    protocols/river-xkb-bindings-v1.xml)))
+
+(rule
+ (targets
+  river_layer_shell_v1_proto.ml
+  river_layer_shell_v1_server.ml
+  river_layer_shell_v1_client.ml)
+ (deps protocols/river-layer-shell-v1.xml)
+ (action
+  (run
+   wayland-scanner-ocaml
+   --open
+   River_window_management_v1_proto
+   protocols/river-layer-shell-v1.xml)))

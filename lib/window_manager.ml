@@ -11,6 +11,9 @@ module River_seat = River.River_window_management_v1_client.River_seat_v1
 module River_output = River.River_window_management_v1_client.River_output_v1
 module River_node = River.River_window_management_v1_client.River_node_v1
 module Edges = River.River_window_management_v1_client.River_window_v1.Edges
+module River_layer_shell = River.River_layer_shell_v1_client.River_layer_shell_v1
+module Seat_layer_shell = River.River_layer_shell_v1_client.River_layer_shell_seat_v1
+module Output_layer_shell = River.River_layer_shell_v1_client.River_layer_shell_output_v1
 
 module River_pointer_binding =
   River.River_window_management_v1_client.River_pointer_binding_v1
@@ -71,28 +74,33 @@ let send_message message wm =
 ;;
 
 let exit_wm wm = River_window_manager.stop wm.window_manager_proxy
+let focus_window wm window = ()
+let workspaces = List.range 0 9 |> List.map Int.to_string
 
 let keys =
   let open River_seat.Modifiers in
   let open Xkbcommon.Keysym in
   let open Int32.Infix in
   let open Layouts in
-  Hashtbl.of_list
-    [ (mod4, K_Down), windows Window_set.focus_down
-    ; (mod4, K_Up), windows Window_set.focus_up
-    ; (mod4 lor shift, K_Down), windows Window_set.swap_down
-    ; (mod4 lor shift, K_Up), windows Window_set.swap_up
-    ; (mod4 lor shift, K_c), kill_focused_window
-    ; (mod4, K_m), windows Window_set.focus_master
-    ; (mod4 lor shift, K_m), windows Window_set.swap_master
-    ; (mod4, K_Left), send_message Shrink
-    ; (mod4, K_Right), send_message Expand
-    ; (mod4, K_comma), send_message (IncMasterN 1)
-    ; (mod4, K_period), send_message (IncMasterN (-1))
-    ; (mod4, K_space), send_message NextLayout
-    ; (mod4, K_t), spawn "alacritty"
-    ; (mod4 lor shift, K_q), exit_wm
-    ]
+  let digit_keys = [ K_0; K_1; K_2; K_3; K_4; K_5; K_6; K_7; K_8; K_9 ] in
+  [ (mod4, K_Down), windows Window_set.focus_down
+  ; (mod4, K_Up), windows Window_set.focus_up
+  ; (mod4 lor shift, K_Down), windows Window_set.swap_down
+  ; (mod4 lor shift, K_Up), windows Window_set.swap_up
+  ; (mod4 lor shift, K_c), kill_focused_window
+  ; (mod4, K_m), windows Window_set.focus_master
+  ; (mod4, K_ISO_Enter), windows Window_set.swap_master
+  ; (mod4, K_Left), send_message Shrink
+  ; (mod4, K_Right), send_message Expand
+  ; (mod4, K_comma), send_message (IncMasterN 1)
+  ; (mod4, K_period), send_message (IncMasterN (-1))
+  ; (mod4, K_space), send_message NextLayout
+  ; (mod4, K_t), spawn "alacritty"
+  ; (mod4 lor shift, K_q), exit_wm
+  ]
+  @ (List.combine_shortest workspaces digit_keys
+     |> List.map (fun (workspace, key) ->
+       (mod4, key), fun wm -> wm.window_set <- Window_set.view workspace wm.window_set))
 ;;
 
 let layout =
@@ -103,8 +111,8 @@ let layout =
 
 let config =
   { keys
-  ; workspaces = List.range 0 9 |> List.map Int.to_string
   ; layout
+  ; workspaces
   ; focus_follows_mouse = false
   ; border_width = 2
   ; normal_border_color = 0
@@ -131,6 +139,8 @@ let output_listener wm output =
     method on_removed _ =
       River_output.destroy output.proxy;
       Wayland.Proxy.delete output.proxy;
+      Output_layer_shell.destroy output.layer_shell_proxy;
+      Wayland.Proxy.delete output.layer_shell_proxy;
       wm.window_set <- Window_set.remove_screen output wm.window_set
 
     method on_wl_output _ ~name:_ = ()
@@ -142,6 +152,17 @@ let output_listener wm output =
     method on_dimensions data ~width ~height =
       let w, h = Int32.(to_int width, to_int height) in
       output.geometry <- { output.geometry with w; h }
+  end
+;;
+
+let layer_shell_output_listener wm output_proxy =
+  object
+    inherit [_] Output_layer_shell.v1
+
+    method on_non_exclusive_area _ ~x ~y ~width ~height =
+      let (Output output) = user_data output_proxy in
+      let x, y, w, h = Int32.(to_int x, to_int y, to_int width, to_int height) in
+      output.working_geometry <- { x; y; w; h }
   end
 ;;
 
@@ -181,6 +202,16 @@ let seat_listener wm seat =
     method on_wl_seat _ ~name:_ = ()
     method on_pointer_position _ ~x:_ ~y:_ = ()
     method on_shell_surface_interaction _ ~shell_surface:_ = ()
+  end
+;;
+
+let layer_shell_seat_listener wm =
+  object
+    inherit [_] Seat_layer_shell.v1
+    method on_focus_none _ = wm.layer_focus <- false
+    (* NOTE: idk if this is ok. i don't see how exclusive or not makes a difference so that's why *)
+    method on_focus_exclusive _ = wm.layer_focus <- true
+    method on_focus_non_exclusive _ = wm.layer_focus <- true
   end
 ;;
 
@@ -245,8 +276,8 @@ let window_manager_listener wm =
     method on_seat _ proxy =
       let (lazy wm) = wm in
       let bindings =
-        Hashtbl.map_list
-          (fun (modifiers, keysym) action ->
+        List.map
+          (fun ((modifiers, keysym), action) ->
              let keysym = Int32.of_int @@ Xkbcommon.Keysym.to_int keysym in
              River_xkb_bindings.get_xkb_binding
                wm.xkb_bindings_proxy
@@ -256,7 +287,13 @@ let window_manager_listener wm =
                ~keysym)
           wm.config.keys
       in
-      let seat = { proxy; bindings } in
+      let layer_shell_proxy =
+        River_layer_shell.get_seat
+          wm.layer_shell_proxy
+          ~seat:proxy
+          (layer_shell_seat_listener wm)
+      in
+      let seat = { proxy; bindings; layer_shell_proxy } in
       wm.seats <- wm.seats @ [ seat ];
       Wayland.Proxy.Handler.attach proxy (seat_listener wm seat);
       Queue.add (fun () -> List.iter River_xkb_binding.enable seat.bindings) wm.queue
@@ -264,7 +301,15 @@ let window_manager_listener wm =
     method on_output _ proxy =
       let (lazy wm) = wm in
       let empty : Rect.t = { x = 0; y = 0; w = 0; h = 0 } in
-      let output = { proxy; geometry = empty } in
+      let layer_shell_proxy =
+        River_layer_shell.get_output
+          wm.layer_shell_proxy
+          ~output:proxy
+          (layer_shell_output_listener wm proxy)
+      in
+      let output =
+        { proxy; geometry = empty; layer_shell_proxy; working_geometry = empty }
+      in
       wm.window_set <- Window_set.add_screen output wm.window_set;
       Wayland.Proxy.Handler.attach proxy (output_listener wm output)
 
@@ -282,7 +327,7 @@ let window_manager_listener wm =
           (fun acc (screen : (_, _, output) Window_set.screen) ->
              let (Layout ((module L), l)) = screen.workspace.layout in
              let workspace = { screen.workspace with layout = l } in
-             let rects, l = L.run_layout wm workspace screen.output.geometry in
+             let rects, l = L.run_layout wm workspace screen.output.working_geometry in
              let screen =
                Option.map_or
                  ~default:screen
@@ -338,18 +383,25 @@ let window_manager_listener wm =
       (match Window_set.focused_window wm.window_set with
        | None -> ()
        | Some window ->
-         let r, g, b, a = to_river_color wm.config.focused_border_color in
-         River_window.set_borders
-           window.proxy
-           ~edges:all_edges
-           ~width:(Int32.of_int wm.config.border_width)
-           ~r
-           ~g
-           ~b
-           ~a;
-         List.iter
-           (fun (seat : seat) -> River_seat.focus_window seat.proxy ~window:window.proxy)
-           wm.seats);
+         if not wm.layer_focus
+         then (
+           let r, g, b, a = to_river_color wm.config.focused_border_color in
+           List.iter
+             (fun (seat : seat) ->
+                River_seat.focus_window seat.proxy ~window:window.proxy)
+             wm.seats;
+           River_window.set_borders
+             window.proxy
+             ~edges:all_edges
+             ~width:(Int32.of_int wm.config.border_width)
+             ~r
+             ~g
+             ~b
+             ~a));
+      (* set current output as default *)
+      (match wm.window_set.visible with
+       | [] -> ()
+       | screen :: _ -> Output_layer_shell.set_default screen.output.layer_shell_proxy);
       River_window_manager.manage_finish wm.window_manager_proxy
 
     method on_finished _ = Stdlib.exit 0
@@ -371,9 +423,11 @@ let run env =
       ; env
       ; window_manager_proxy = Registry.bind registry (window_manager_listener wm)
       ; xkb_bindings_proxy = Registry.bind registry (new River_xkb_bindings.v2)
+      ; layer_shell_proxy = Registry.bind registry (new River_layer_shell.v1)
       ; window_set = Window_set.create config.layout config.workspaces []
       ; queue = Queue.create ()
       ; seats = []
+      ; layer_focus = false
       }
   in
   ignore @@ Lazy.force wm
