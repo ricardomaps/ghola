@@ -21,6 +21,13 @@ let filter f stack =
      | [] -> None)
 ;;
 
+let pop stack =
+  match stack.up, stack.down with
+  | [], [] -> stack.focus, None
+  | _, focus :: down -> stack.focus, Some { stack with focus; down }
+  | focus :: up, _ -> stack.focus, Some { stack with focus; up }
+;;
+
 let mirror stack = { stack with up = stack.down; down = stack.up }
 let mirrored f stack = mirror stack |> f |> mirror
 

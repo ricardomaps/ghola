@@ -16,16 +16,12 @@ type ('a, 'l, 'o) t =
   ; hidden : ('a, 'l) workspace list
   }
 
-let create layout tags outputs =
+let create layout tags =
   if List.is_empty tags
   then invalid_arg "Stack_set.create called with empty tag list"
   else (
     let workspaces = List.map (fun tag -> { tag; layout; stack = None }) tags in
-    let seen, hidden = List.take_drop (List.length outputs) workspaces in
-    let visible =
-      List.map2 (fun workspace output -> { workspace; output }) seen outputs
-    in
-    { visible; hidden })
+    { visible = []; hidden = workspaces })
 ;;
 
 (* TODO: think about what to do when there are more screens than workspaces *)
@@ -93,6 +89,7 @@ let swap_up stack_set = map_stack Zipper.swap_up stack_set
 let swap_down stack_set = map_stack Zipper.swap_down stack_set
 let focus_master stack_set = map_stack Zipper.focus_master stack_set
 let swap_master stack_set = map_stack Zipper.swap_master stack_set
+let shift_master stack_set = map_stack Zipper.shift_master stack_set
 
 let insert_up window =
   update_stack
@@ -102,7 +99,7 @@ let insert_up window =
 
 let lookup_workspace output stack_set =
   stack_set.visible
-  |> List.find_opt (fun screen -> screen.output Stdlib.( == ) output)
+  |> List.find_opt (fun screen -> Stdlib.( == ) screen.output output)
   |> Option.map (fun screen -> screen.workspace.tag)
 ;;
 
@@ -174,13 +171,13 @@ let greedy_view tag stack_set =
 ;;
 
 let focus_window (window : 'a) (stack_set : ('a, 'b, 'c) t) =
-  let focused (ss : ('a, 'b, 'c) t) : bool =
-    Option.equal Stdlib.( == ) (Some window) (focused_window ss)
-  in
+  let focused ss = Option.equal Stdlib.( == ) (Some window) (focused_window ss) in
   let rec go ss = if focused ss then ss else go (focus_up ss) in
   if focused stack_set
-  then Some stack_set
-  else find_tag window stack_set |> Option.map (fun tag -> go (view tag stack_set))
+  then stack_set
+  else
+    find_tag window stack_set
+    |> Option.map_or ~default:stack_set (fun tag -> go (view tag stack_set))
 ;;
 
 let remove_window window stack_set =
@@ -199,7 +196,7 @@ let on_workspace tag f stack_set =
 ;;
 
 let shift_window tag window stack_set =
-  match find_tag tag stack_set with
+  match find_tag window stack_set with
   | Some from when String.( <> ) from tag && tag_mem tag stack_set ->
     stack_set
     |> on_workspace from (fun workspace ->

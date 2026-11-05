@@ -1,11 +1,58 @@
 type river_modifier = River.River_window_management_v1_client.River_seat_v1.Modifiers.t
 
+type river_pointer_binding =
+  [ `V4 ] River.River_window_management_v1_client.River_pointer_binding_v1.t
+
+type floating_rect =
+  { cx : float
+  ; cy : float
+  ; rw : float
+  ; rh : float
+  }
+
+type presentation =
+  | Tiled
+  | Floating of floating_rect
+
+type window =
+  { proxy : [ `V4 ] River.River_window_management_v1_client.River_window_v1.t
+  ; node : [ `V4 ] River.River_window_management_v1_client.River_node_v1.t
+  ; mutable presentation : presentation
+  ; mutable dimensions : Rect.t
+  ; mutable title : string option
+  ; mutable app_id : string option
+  ; mutable identifier : string option
+  ; mutable parent : window option
+  ; mutable min_width : int32
+  ; mutable max_width : int32
+  ; mutable min_height : int32
+  ; mutable max_height : int32
+  }
+
+type operation =
+  | Move of
+      { window : window
+      ; start_x : int32
+      ; start_y : int32
+      ; mutable dx : int32
+      ; mutable dy : int32
+      }
+  | Resize of
+      { window : window
+      ; edges : River.River_window_management_v1_client.River_window_v1.Edges.t
+      ; start_rect : Rect.t
+      ; mutable dx : int32
+      ; mutable dy : int32
+      }
+
 type seat =
   { proxy : [ `V4 ] River.River_window_management_v1_client.River_seat_v1.t
   ; layer_shell_proxy :
       [ `V1 ] River.River_layer_shell_v1_client.River_layer_shell_seat_v1.t
   ; mutable bindings :
       [ `V2 ] River.River_xkb_bindings_v1_client.River_xkb_binding_v1.t list
+  ; mutable pointer_bindings : river_pointer_binding list
+  ; mutable operation : operation option
   }
 
 type output =
@@ -14,16 +61,6 @@ type output =
       [ `V1 ] River.River_layer_shell_v1_client.River_layer_shell_output_v1.t
   ; mutable geometry : Rect.t
   ; mutable working_geometry : Rect.t
-  }
-
-type window =
-  { proxy : [ `V4 ] River.River_window_management_v1_client.River_window_v1.t
-  ; node : [ `V4 ] River.River_window_management_v1_client.River_node_v1.t
-  ; mutable dimensions : Rect.t
-  ; mutable title : string option
-  ; mutable app_id : string option
-  ; mutable identifier : string option
-  ; mutable parent : window option
   }
 
 module rec Types : sig
@@ -44,16 +81,19 @@ module rec Types : sig
     ; mutable window_set : (window, layout, output) Window_set.t
     ; mutable seats : seat list
     ; mutable layer_focus : bool
+    ; mutable hovered_window : window option
     }
 
   and config =
     { keys : ((river_modifier * Xkbcommon.Keysym.t) * (wm -> unit)) list
+    ; pointer_bindings : ((river_modifier * int32) * (window -> wm -> unit)) list
     ; workspaces : string list
     ; layout : layout
     ; focus_follows_mouse : bool
     ; border_width : int
     ; normal_border_color : int
     ; focused_border_color : int
+    ; startup_hook : wm -> unit
     }
 end =
   Types

@@ -10,7 +10,7 @@ let mirror { x; y; w; h } = { x = y; y = x; w = h; h = w }
 let split_vertically n r =
   let rec go n r acc =
     if n < 2
-    then List.rev @@ r :: acc
+    then List.rev @@ (r :: acc)
     else (
       let h = r.h / n in
       let r' = { r with y = r.y + h; h = r.h - h } in
@@ -30,4 +30,8 @@ let split_horizontally_by f r =
 let split_vertically_by f r =
   let a, b = split_horizontally_by f (mirror r) in
   mirror a, mirror b
+;;
+
+let is_point_within x y rect =
+  x >= rect.x && y >= rect.y && x <= rect.x + rect.w && y <= rect.y + rect.h
 ;;

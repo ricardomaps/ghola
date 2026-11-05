@@ -60,6 +60,7 @@
               dune_3
               ocaml-lsp
               ocamlformat
+              utop
             ];
           };
         });
