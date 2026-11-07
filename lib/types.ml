@@ -27,6 +27,7 @@ and Config : sig
     ; normal_border_color : Color.t
     ; focused_border_color : Color.t
     ; startup_hook : Wm.t -> unit
+    ; manage_hook : Wm.t -> Window.t -> unit
     }
 end =
   Config

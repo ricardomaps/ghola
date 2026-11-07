@@ -70,12 +70,28 @@ let layout =
 
 let startup_hook = Wm.spawn "noctalia"
 
+let manage_hook = 
+  let open Manage_hook in
+  let open Query in
+  let do_shift_to_parent = fun wm window ->
+    Wm.parent_workspace window wm
+    |> Option.iter (fun tag -> Wm.windows (Window_set.shift_window tag window) wm)
+  in
+  let do_use_ssd = fun _ (window : Window.t) -> Proto.River_window.use_ssd window.proxy in
+  compose_all
+    [ always ==> do_use_ssd
+    ; has_parent ==> do_shift_to_parent +> do_float 
+    ; is_fixed_size ==> do_float
+    ; app_id =? "org.squidowl.halloy" ==> do_float
+    ]
+
 let default =
   { keys
   ; pointer_bindings
   ; layout
   ; workspaces
   ; startup_hook
+  ; manage_hook
   ; focus_follows_mouse = false
   ; border_width = 2
   ; normal_border_color = Color.of_int 0x000000FF

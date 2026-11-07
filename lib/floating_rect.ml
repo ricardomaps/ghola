@@ -15,3 +15,5 @@ let of_rects ~(inner : Rect.t) ~(outer : Rect.t) =
   ; rh = f inner.h /. f outer.h
   }
 ;;
+
+let default = { cx = 0.5; cy = 0.5; rw = 0.5; rh = 0.5 }

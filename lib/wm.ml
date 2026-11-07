@@ -142,13 +142,8 @@ let parent_workspace (window : Window.t) wm =
 ;;
 
 let init_window (window : Window.t) wm =
-  let initial_floating = Floating_rect.{ cx = 0.5; cy = 0.5; rw = 0.5; rh = 0.5 } in
   River_window.use_ssd window.proxy;
-  (* send a transient window to its parent's workspace *)
-  parent_workspace window wm
-  |> Option.iter (fun tag -> windows (Window_set.shift_window tag window) wm);
-  if Window.is_fixed_sized window || Window.has_parent window
-  then window.presentation <- Floating initial_floating
+  wm.config.manage_hook wm window
 ;;
 
 let resize_delta ~neg ~pos edges d =
