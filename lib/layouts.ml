@@ -1,4 +1,5 @@
-open Wm
+open Types.Layout
+open Message
 
 module Full = struct
   type t = unit
@@ -26,7 +27,7 @@ module Mirror (L : Layout.S) = struct
   ;;
 end
 
-type message += IncMasterN of int | Expand | Shrink
+type Message.t += IncMasterN of int | Expand | Shrink
 
 module Tall = struct
   type t =
@@ -67,7 +68,7 @@ module Tall = struct
   ;;
 end
 
-type message += FirstLayout | NextLayout | NextNoWrap | JumpToLayout of string
+type Message.t += FirstLayout | NextLayout | NextNoWrap | JumpToLayout of string
 
 module Choose (L : Layout.S) (R : Layout.S) = struct
   type clr =
@@ -167,7 +168,7 @@ module Choose (L : Layout.S) (R : Layout.S) = struct
   ;;
 end
 
-let full : layout = Layout ((module Full), ())
+let full = Layout ((module Full), ())
 
 let tall nmaster ratio_increment ratio =
   let l : Tall.t = { nmaster; ratio; ratio_increment } in

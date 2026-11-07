@@ -1,20 +1,24 @@
+open Containers
+open Int32
+
 type t =
-  { x : int
-  ; y : int
-  ; w : int
-  ; h : int
+  { x : int32
+  ; y : int32
+  ; w : int32
+  ; h : int32
   }
 
+let empty = { x = 0l; y = 0l; w = 0l; h = 0l }
 let mirror { x; y; w; h } = { x = y; y = x; w = h; h = w }
 
 let split_vertically n r =
   let rec go n r acc =
-    if n < 2
+    if Int.(n < 2)
     then List.rev @@ (r :: acc)
     else (
-      let h = r.h / n in
+      let h = r.h / Int32.of_int n in
       let r' = { r with y = r.y + h; h = r.h - h } in
-      go (n - 1) r' ({ r with h } :: acc))
+      go Int.(n - 1) r' ({ r with h } :: acc))
   in
   go n r []
 ;;
@@ -23,7 +27,7 @@ let split_vertically n r =
 let split_horizontally n r = r |> mirror |> split_vertically n |> List.map mirror
 
 let split_horizontally_by f r =
-  let w = int_of_float (Float.floor (float_of_int r.w *. f)) in
+  let w = Int32.of_float (Int32.to_float r.w *. f) in
   { r with w }, { r with x = r.x + w; w = r.w - w }
 ;;
 
@@ -35,3 +39,10 @@ let split_vertically_by f r =
 let is_point_within x y rect =
   x >= rect.x && y >= rect.y && x <= rect.x + rect.w && y <= rect.y + rect.h
 ;;
+
+let shrink by { x; y; w; h } =
+  { x = x + by
+  ; y = y + by
+  ; w = w - 2l * by
+  ; h = h - 2l * by
+  }

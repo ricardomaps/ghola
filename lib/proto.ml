@@ -1,0 +1,22 @@
+module River_window_manager =
+  River.River_window_management_v1_client.River_window_manager_v1
+
+module River_window = River.River_window_management_v1_client.River_window_v1
+module River_xkb_bindings = River.River_xkb_bindings_v1_client.River_xkb_bindings_v1
+module River_xkb_binding = River.River_xkb_bindings_v1_client.River_xkb_binding_v1
+module River_seat = River.River_window_management_v1_client.River_seat_v1
+module River_output = River.River_window_management_v1_client.River_output_v1
+module River_node = River.River_window_management_v1_client.River_node_v1
+module River_edges = River.River_window_management_v1_client.River_window_v1.Edges
+module River_layer_shell = River.River_layer_shell_v1_client.River_layer_shell_v1
+
+module River_layer_shell_seat =
+  River.River_layer_shell_v1_client.River_layer_shell_seat_v1
+
+module River_layer_shell_output =
+  River.River_layer_shell_v1_client.River_layer_shell_output_v1
+
+module River_pointer_binding =
+  River.River_window_management_v1_client.River_pointer_binding_v1
+
+module River_modifier = River.River_window_management_v1_client.River_seat_v1.Modifiers
