@@ -18,8 +18,10 @@ end =
 
 and Config : sig
   type t =
-    { keys : ((River_modifier.t * Xkbcommon.Keysym.t) * (Wm.t -> unit)) list
+    { keys : t -> ((River_modifier.t * Xkbcommon.Keysym.t) * (Wm.t -> unit)) list
     ; pointer_bindings : ((River_modifier.t * int32) * (Window.t -> Wm.t -> unit)) list
+    ; terminal : string
+    ; modifier : River_modifier.t
     ; workspaces : string list
     ; layout : Layout.t
     ; focus_follows_mouse : bool
@@ -27,7 +29,7 @@ and Config : sig
     ; normal_border_color : Color.t
     ; focused_border_color : Color.t
     ; startup_hook : Wm.t -> unit
-    ; manage_hook : Wm.t -> Window.t -> unit
+    ; manage_hook : Window.t -> Wm.t -> unit
     }
 end =
   Config

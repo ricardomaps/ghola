@@ -16,4 +16,4 @@ let of_rects ~(inner : Rect.t) ~(outer : Rect.t) =
   }
 ;;
 
-let default = { cx = 0.5; cy = 0.5; rw = 0.5; rh = 0.5 }
+let default = { cx = 0.5; cy = 0.5; rw = 0.67; rh = 0.67 }

@@ -165,17 +165,21 @@ let window_manager_handler (wm : Types.Wm.t Lazy.t) =
 
     method on_window data proxy =
       let (lazy wm) = wm in
-      let window = Window.create proxy in
+      let window = Window.create proxy ~handler:(window_handler wm) in
       Wm.windows (Window_set.insert_up window) wm;
-      Wm.defer wm (fun () -> Wm.init_window window wm);
-      Wayland.Proxy.Handler.attach proxy (window_handler wm window)
+      Wm.defer wm (fun () ->
+        Option.bind window.parent (fun parent -> Window_set.find_tag parent wm.window_set)
+        |> Option.iter (fun tag -> Wm.windows (Window_set.shift_window tag window) wm);
+        if Window.has_parent window || Window.is_fixed_sized window
+        then window.presentation <- Floating Floating_rect.default;
+        wm.config.manage_hook window wm)
 
     method on_seat _ proxy =
       let (lazy wm) = wm in
       let seat =
         Seat.create
           proxy
-          ~keys:wm.config.keys
+          ~keys:(wm.config.keys wm.config)
           ~pointer_bindings:wm.config.pointer_bindings
           ~seat_handler:(seat_handler wm)
           ~xkb_handler:(xkb_binding_handler wm)

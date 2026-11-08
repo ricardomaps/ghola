@@ -41,8 +41,5 @@ let is_point_within x y rect =
 ;;
 
 let shrink by { x; y; w; h } =
-  { x = x + by
-  ; y = y + by
-  ; w = w - 2l * by
-  ; h = h - 2l * by
-  }
+  { x = x + by; y = y + by; w = w - (2l * by); h = h - (2l * by) }
+;;

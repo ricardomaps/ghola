@@ -137,15 +137,6 @@ let move_window window wm =
   Queue.add (fun () -> River_seat.op_start_pointer seat.proxy) wm.queue
 ;;
 
-let parent_workspace (window : Window.t) wm =
-  Option.bind window.parent (fun parent -> Window_set.find_tag parent wm.window_set)
-;;
-
-let init_window (window : Window.t) wm =
-  River_window.use_ssd window.proxy;
-  wm.config.manage_hook wm window
-;;
-
 let resize_delta ~neg ~pos edges d =
   if Edges.contains neg edges then -d else if Edges.contains pos edges then d else 0l
 ;;
@@ -181,19 +172,17 @@ let floating_placements wm (screen : _ Window_set.screen) =
 let layout_screen wm (screen : _ Window_set.screen) =
   let open Layout in
   let (Layout ((module L), state)) = screen.workspace.layout in
-  let tiled_stack =
-    Option.bind screen.workspace.stack (Zipper.filter Window.is_tiled)
-  in
+  let tiled_stack = Option.bind screen.workspace.stack (Zipper.filter Window.is_tiled) in
   let tiled_workspace = { screen.workspace with layout = state; stack = tiled_stack } in
-  let tiles, new_state =
-    L.run_layout wm tiled_workspace screen.output.working_geometry
-  in
+  let tiles, new_state = L.run_layout wm tiled_workspace screen.output.working_geometry in
   let floats = floating_placements wm screen in
   let screen =
     match new_state with
     | None -> screen
     | Some s ->
-      { screen with workspace = { screen.workspace with layout = Layout ((module L), s) } }
+      { screen with
+        workspace = { screen.workspace with layout = Layout ((module L), s) }
+      }
   in
   floats @ tiles, screen
 ;;
@@ -213,29 +202,29 @@ let arrange wm =
 
 let border_color wm ~focused (window : Window.t) =
   let is_focused =
-    not wm.layer_focus && Option.equal Window.equal focused (Some window)
+    (not wm.layer_focus) && Option.equal Window.equal focused (Some window)
   in
-    if is_focused then wm.config.focused_border_color else wm.config.normal_border_color
+  if is_focused then wm.config.focused_border_color else wm.config.normal_border_color
 ;;
 
 let place wm ~focused ((rect : Rect.t), (window : Window.t)) =
   let bw = wm.config.border_width in
   let inner = Rect.shrink (Int32.of_int bw) rect in
   let edges = if Window.is_tiled window then Edges.all else Edges.none in
-  River_window.propose_dimensions
-    window.proxy
-    ~width:inner.w
-    ~height:inner.h;
-  River_node.set_position window.node ~x:(inner.x) ~y:inner.y;
+  River_window.propose_dimensions window.proxy ~width:inner.w ~height:inner.h;
+  River_node.set_position window.node ~x:inner.x ~y:inner.y;
   River_window.show window.proxy;
   River_window.set_tiled window.proxy ~edges;
   if Window.is_tiled window then River_node.place_bottom window.node;
-  let Color.{ r; g; b; a }= border_color wm ~focused window in
+  let Color.{ r; g; b; a } = border_color wm ~focused window in
   River_window.set_borders
     window.proxy
     ~edges:Edges.all
     ~width:(Int32.of_int bw)
-    ~r ~g ~b ~a;
+    ~r
+    ~g
+    ~b
+    ~a;
   window.dimensions <- inner
 ;;
 
@@ -281,12 +270,13 @@ let render_start wm =
     | Operation.Move { window; start_x; start_y; dx; dy } ->
       let x = start_x + dx in
       let y = start_y + dy in
-      window.dimensions
-      <- { window.dimensions with x; y };
+      window.dimensions <- { window.dimensions with x; y };
       float window wm;
       River_node.set_position window.node ~x ~y
     | Operation.Resize { window; start_rect = { x; y; w; h }; edges; _ } ->
-      let x = if Edges.contains Edges.left edges then x + w - window.dimensions.w else x in
+      let x =
+        if Edges.contains Edges.left edges then x + w - window.dimensions.w else x
+      in
       let y = if Edges.contains Edges.top edges then y + h - window.dimensions.h else y in
       window.dimensions <- { window.dimensions with x; y };
       float window wm;

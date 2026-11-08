@@ -20,20 +20,24 @@ type t =
   ; mutable max_height : int32
   }
 
-let create proxy =
-  { proxy
-  ; presentation = Tiled
-  ; node = River_window.get_node proxy (new River_node.v4)
-  ; dimensions = Rect.empty
-  ; title = None
-  ; app_id = None
-  ; identifier = None
-  ; parent = None
-  ; min_width = 0l
-  ; max_width = 0l
-  ; min_height = 0l
-  ; max_height = 0l
-  }
+let create proxy ~handler =
+  let window =
+    { proxy
+    ; presentation = Tiled
+    ; node = River_window.get_node proxy (new River_node.v4)
+    ; dimensions = Rect.empty
+    ; title = None
+    ; app_id = None
+    ; identifier = None
+    ; parent = None
+    ; min_width = 0l
+    ; max_width = 0l
+    ; min_height = 0l
+    ; max_height = 0l
+    }
+  in
+  Wayland.Proxy.Handler.attach proxy (handler window);
+  window
 ;;
 
 let destroy window =
