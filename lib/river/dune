@@ -1,5 +1,6 @@
 (library
  (name river)
+ (public_name ghola.river)
  (libraries wayland))
 
 (rule

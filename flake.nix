@@ -24,23 +24,16 @@
 
             src = ./.;
 
-            duneVersion = "3";
-
-            buildInputs = with ocamlPackages; [
-              ocaml
-              xkbcommon
+            nativeBuildInputs = with ocamlPackages; [
               wayland
-              eio
-              eio_main
-              containers
             ];
 
             propagatedBuildInputs = with ocamlPackages; [
-              eio
-              eio_main
-              ocaml
               xkbcommon
               wayland
+              xdg
+              eio
+              eio_main
               containers
             ];
           };

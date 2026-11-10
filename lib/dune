@@ -1,3 +1,4 @@
 (library
  (name ghola)
- (libraries river containers wayland xkbcommon))
+ (public_name ghola)
+ (libraries river containers wayland xkbcommon eio_main xdg))

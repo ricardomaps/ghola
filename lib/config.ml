@@ -24,12 +24,6 @@ let keys { modifier; terminal; workspaces; _ } =
   ; (modifier, K_t), tile_window
   ; (modifier, K_f), float_window
   ; (modifier, K_Return), spawn terminal
-  ; (modifier, K_space), spawn "noctalia msg panel-toggle launcher"
-  ; (modifier, K_XF86AudioRaiseVolume), spawn "noctalia msg volume-up"
-  ; (modifier, K_XF86AudioLowerVolume), spawn "noctalia msg volume-down"
-  ; (modifier, K_XF86AudioMute), spawn "noctalia msg volume-mute"
-  ; (modifier, K_XF86MonBrightnessUp), spawn "noctalia msg brightness-up"
-  ; (modifier, K_XF86MonBrightnessDown), spawn "noctalia msg brightness-down"
   ; (modifier lor shift, K_q), exit_wm
   ]
   @ (List.combine_shortest workspaces digit_keys
@@ -66,7 +60,7 @@ let layout =
   tiled_layout ||| mirror tiled_layout ||| full
 ;;
 
-let startup_hook = Wm.spawn "noctalia"
+let startup_hook _ = ()
 
 let manage_hook =
   let open Manage_hook in
