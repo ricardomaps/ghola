@@ -8,9 +8,10 @@ let version = ref false
 let recompile = ref false
 
 let rec spec =
-  [ ("--version", Arg.Set version, "Print the version number")
-  ; ("--recompile", Arg.Set recompile, "Recompile your config")
+  [ "--version", Arg.Set version, "Print the version number"
+  ; "--recompile", Arg.Set recompile, "Recompile your config"
   ]
+;;
 
 let () =
   Arg.parse spec anon usage;
@@ -23,13 +24,16 @@ let () =
     if not success then exit 1
   | _ ->
     let success = Compile.recompile env#process_mgr dirs in
-    if success then (
+    if success
+    then (
       let bin_name = Directories.bin_file dirs |> Eio.Path.native_exn in
       let args = Array.of_list (bin_name :: !args) in
-      Unix.execv bin_name args
-    ) else (
+      Unix.execv bin_name args)
+    else (
       let config_path = Eio.Path.native_exn dirs.config in
-      prerr_endline @@ "Could not compile config at " ^ config_path ^ ", starting ghola with default config";
-      Launch.run env Config.default
-    )
+      prerr_endline
+      @@ "Could not compile config at "
+      ^ config_path
+      ^ ", starting ghola with default config";
+      Launch.run env Config.default)
 ;;

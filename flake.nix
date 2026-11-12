@@ -45,10 +45,18 @@
           ocamlPackages = pkgs.ocamlPackages;
         in
         {
+          test = pkgs.mkShell {
+            inputsFrom = [ self.packages.${system}.default ];
+            nativeBuildInputs = with ocamlPackages; [
+              ocaml
+              findlib
+              self.packages.${system}.default
+            ];
+          };
+
           default = pkgs.mkShell {
             inputsFrom = [ self.packages.${system}.default ];
-
-            buildInputs = with ocamlPackages; [
+            nativeBuildInputs = with ocamlPackages; [
               ocaml
               dune_3
               ocaml-lsp

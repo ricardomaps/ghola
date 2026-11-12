@@ -9,7 +9,7 @@ type 'a t =
 let err_file { data; _ } = data / "ghola.errors"
 let bin_file { cache; _ } = cache / "ghola-bin"
 let lib_file { config; _ } = config / "lib"
-let src_file { config; _ } = config / "ghola.ml"
+let src_file { config; _ } = config / "config.ml"
 
 let xdg_dirs ~fs =
   let xdg = Xdg.create ~env:Sys.getenv_opt () in

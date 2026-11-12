@@ -7,20 +7,15 @@
 (source
  (github username/reponame))
 
-(authors "Author Name <author@example.com>")
+(authors "Ricardo Mapurunga Junior <ricardomapurungajunior@proton.me>")
 
-(maintainers "Maintainer Name <maintainer@example.com>")
+(maintainers "Ricardo Mapurunga Junior <ricardomapurungajunior@proton.me>")
 
 (license LICENSE)
 
-(documentation https://url/to/documentation)
-
 (package
  (name ghola)
- (synopsis "A short synopsis")
- (description "A longer description")
+ (synopsis "Window manager for the River compositor")
  (depends ocaml containers wayland xkbcommon xdg)
  (tags
   ("add topics" "to describe" your project)))
-
-; See the complete stanza docs at https://dune.readthedocs.io/en/stable/reference/dune-project/index.html

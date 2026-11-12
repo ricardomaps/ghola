@@ -1,7 +1,7 @@
 open Proto
 open Handlers
 
-let run env config = 
+let run env config =
   let open Wayland in
   Eio.Switch.run
   @@ fun sw ->
@@ -23,3 +23,4 @@ let run env config =
       }
   in
   config.startup_hook (Lazy.force wm)
+;;
