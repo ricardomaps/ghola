@@ -1,76 +1,8 @@
-open Types.Layout
 open Message
-
-module Full = struct
-  type t = unit
-
-  let description _ = "Full"
-  let handle_message _ _ _ = None
-
-  let run_layout _ (workspace : _ Window_set.workspace) rect =
-    match workspace.stack with
-    | None -> [], None
-    | Some stack -> [ rect, stack.focus ], None
-  ;;
-end
-
-module Mirror (L : Layout.S) = struct
-  type t = L.t
-
-  let description l = "Mirror " ^ L.description l
-  let handle_message = L.handle_message
-
-  let run_layout wm workspace rect =
-    let rs, u = L.run_layout wm workspace (Rect.mirror rect) in
-    let rs = List.map (fun (r, w) -> Rect.mirror r, w) rs in
-    rs, u
-  ;;
-end
-
-type Message.t += IncMasterN of int | Expand | Shrink
-
-module Tall = struct
-  type t =
-    { nmaster : int
-    ; ratio_increment : float
-    ; ratio : float
-    }
-
-  let description _ = "Tall"
-
-  let tile n nmaster ratio rect =
-    let open Rect in
-    if nmaster >= n || nmaster = 0
-    then split_vertically n rect
-    else (
-      (* named pupil so we stay woke *)
-      let master_rect, pupil_rect = split_horizontally_by ratio rect in
-      let masters = split_vertically nmaster master_rect in
-      let pupils = split_vertically (n - nmaster) pupil_rect in
-      masters @ pupils)
-  ;;
-
-  let run_layout _ (workspace : _ Window_set.workspace) rect =
-    match workspace.stack with
-    | None -> [], None
-    | Some stack ->
-      let { ratio; nmaster; _ } = workspace.layout in
-      let windows = Zipper.to_list stack in
-      let rects = tile (List.length windows) nmaster ratio rect in
-      List.combine rects windows, None
-  ;;
-
-  let handle_message _ l = function
-    | IncMasterN n -> Some { l with nmaster = l.nmaster + n }
-    | Expand -> Some { l with ratio = Float.min 1. (l.ratio +. l.ratio_increment) }
-    | Shrink -> Some { l with ratio = Float.max 0. (l.ratio -. l.ratio_increment) }
-    | _ -> None
-  ;;
-end
 
 type Message.t += FirstLayout | NextLayout | NextNoWrap | JumpToLayout of string
 
-module Choose (L : Layout.S) (R : Layout.S) = struct
+module Make (L : Layout.S) (R : Layout.S) = struct
   type clr =
     | CL
     | CR
@@ -167,18 +99,3 @@ module Choose (L : Layout.S) (R : Layout.S) = struct
          |> Option.map (fun right -> { layout with right }))
   ;;
 end
-
-let full = Layout ((module Full), ())
-
-let tall nmaster ratio_increment ratio =
-  let l : Tall.t = { nmaster; ratio; ratio_increment } in
-  Layout ((module Tall), l)
-;;
-
-let mirror (Layout ((module L), l)) = Layout ((module Mirror (L)), l)
-
-let ( ||| ) (Layout ((module L), l)) (Layout ((module R), r)) =
-  let module F = Choose (L) (R) in
-  let t : F.t = { current = CL; left = l; right = r } in
-  Layout ((module F), t)
-;;

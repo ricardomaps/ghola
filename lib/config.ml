@@ -9,7 +9,7 @@ let keys { modifier; terminal; workspaces; _ } =
   let open Layouts in
   let open Wm in
   let digit_keys = [ K_0; K_1; K_2; K_3; K_4; K_5; K_6; K_7; K_8; K_9 ] in
-  [ (modifier, K_Down), Wm.windows Window_set.focus_down
+  [ (modifier, K_Down), windows Window_set.focus_down
   ; (modifier, K_Up), windows Window_set.focus_up
   ; (modifier lor shift, K_Down), windows Window_set.swap_down
   ; (modifier lor shift, K_Up), windows Window_set.swap_up
@@ -56,7 +56,7 @@ let workspaces = List.range 0 9 |> List.map Int.to_string
 
 let layout =
   let open Layouts in
-  let tiled_layout = tall 1 0.03 0.5 in
+  let tiled_layout = tall ~nmaster:1 ~ratio:0.5 ~ratio_increment:0.03 in
   tiled_layout ||| mirror tiled_layout ||| full
 ;;
 

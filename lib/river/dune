@@ -1,3 +1,5 @@
+(include_subdirs no)
+
 (library
  (name river)
  (public_name ghola.river)

@@ -108,14 +108,16 @@ let detect_compile Directories.{ config = dir; _ } =
 ;;
 
 let report_errors dirs =
-  try 
+  try
     let err_file = Directories.err_file dirs in
     let errs = Eio.Path.load err_file in
-    if not @@ String.is_empty errs then (
+    if not @@ String.is_empty errs
+    then (
       prerr_endline "Errors detected while compiling Ghola config";
       prerr_string errs;
       prerr_string ("Check " ^ Eio.Path.native_exn err_file))
-  with _ -> ()
+  with
+  | _ -> ()
 ;;
 
 let should_compile dirs = function
