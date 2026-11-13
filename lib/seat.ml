@@ -37,6 +37,7 @@ let create
   let pointer_bindings =
     List.map
       (fun ((modifiers, button), action) ->
+         let button = Button.to_int32 button in
          River_seat.get_pointer_binding proxy (pointer_handler action) ~modifiers ~button)
       pointer_bindings
   in

@@ -38,13 +38,12 @@ let pointer_bindings =
   let open River_seat.Modifiers in
   let open Window_set in
   let open Wm in
-  let button1, button2 = 0x110l, 0x111l in
-  [ ( (mod4, button1)
+  [ ( (mod4, Button.Btn_left)
     , fun window wm ->
         windows (focus_window window) wm;
         move_window window wm;
         windows shift_master wm )
-  ; ( (mod4, button2)
+  ; ( (mod4, Button.Btn_right)
     , fun window wm ->
         windows (focus_window window) wm;
         resize_window window wm;

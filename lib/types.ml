@@ -19,7 +19,7 @@ end =
 and Config : sig
   type t =
     { keys : t -> ((River_modifier.t * Xkbcommon.Keysym.t) * (Wm.t -> unit)) list
-    ; pointer_bindings : ((River_modifier.t * int32) * (Window.t -> Wm.t -> unit)) list
+    ; pointer_bindings : ((River_modifier.t * Button.t) * (Window.t -> Wm.t -> unit)) list
     ; terminal : string
     ; modifier : River_modifier.t
     ; workspaces : string list
