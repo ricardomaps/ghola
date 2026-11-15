@@ -7,9 +7,13 @@ type 'a t =
   }
 
 let err_file { data; _ } = data / "ghola.errors"
+let err_file_name dirs = Eio.Path.native_exn @@ err_file dirs
 let bin_file { cache; _ } = cache / "ghola-bin"
+let bin_file_name dirs = Eio.Path.native_exn @@ bin_file dirs
 let lib_file { config; _ } = config / "lib"
+let lib_file_name dirs = Eio.Path.native_exn @@ lib_file dirs
 let src_file { config; _ } = config / "config.ml"
+let src_file_name dirs = Eio.Path.native_exn @@ src_file dirs
 
 let xdg_dirs ~fs =
   let xdg = Xdg.create ~env:Sys.getenv_opt () in

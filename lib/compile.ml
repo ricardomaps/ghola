@@ -1,4 +1,3 @@
-(* this whole thing is absolute garbage *)
 open! Containers
 
 let ( / ) = Eio.Path.( / )
@@ -8,116 +7,94 @@ type compile_method =
   | NixDefault
   | Dune
   | Ocamlopt
-  | Script of string
+  | Script
 
-let is_executable path =
-  match Eio.Path.stat ~follow:true path with
-  | { kind = `Regular_file; perm; _ } -> perm land 0o111 <> 0
-  | _ -> false
-  | exception _ -> false
+let detect_compile dir =
+  List.find_map
+    (fun (f, meth) -> Option.return_if (Eio.Path.is_file @@ (dir / f)) meth)
+    [ "build", Script
+    ; "flake.nix", NixFlake
+    ; "default.nix", NixDefault
+    ; "dune-project", Dune
+    ; "config.ml", Ocamlopt
+    ]
+;;
+
+let compile mgr (Directories.{ config; cache; _ } as dirs) meth =
+  let open Directories in
+  let ( >>= ) = Result.( >>= ) in
+  let config_dir = Eio.Path.native_exn config in
+  Eio.Path.with_open_out ~create:(`Or_truncate 0o644) (err_file dirs)
+  @@ fun stderr ->
+  let fail msg =
+    Eio.Flow.copy_string (msg ^ "\n") stderr;
+    Error msg
+  in
+  let install ?(cwd = cache) src =
+    let tmp = cache / "ghola-config.tmp" in
+    try
+      Eio.Path.unlink ~missing_ok:true tmp;
+      Eio.Path.(load (cwd / src) |> save ~create:(`Exclusive 0o755) tmp);
+      Eio.Path.rename tmp (bin_file dirs);
+      Ok ()
+    with
+    | Eio.Io _ as e ->
+      fail
+      @@ Fmt.str
+           "Failed to copy %a to %a: %a"
+           Eio.Path.pp
+           (cwd / src)
+           Eio.Path.pp
+           (bin_file dirs)
+           Eio.Exn.pp
+           e
+  in
+  let run ?(cwd = cache) cmd =
+    try
+      Eio.Process.run mgr ~cwd ~stderr ~stdout:stderr cmd;
+      Ok ()
+    with
+    | Eio.Exn.Io (e, _) -> fail @@ Fmt.str "%a" Eio.Exn.pp_err e
+  in
+  match meth with
+  | Script -> run [ config_dir ^ "/build"; bin_file_name dirs ]
+  | NixFlake ->
+    run [ "nix"; "build"; config_dir ] >>= fun () -> install "result/bin/config"
+  | NixDefault ->
+    run [ "nix-build"; config_dir ] >>= fun () -> install "result/bin/config"
+  | Dune ->
+    run ~cwd:config [ "dune"; "build"; "bin/config.exe" ]
+    >>= fun () -> install ~cwd:config "_build/default/bin/config.exe"
+  | Ocamlopt ->
+    let obj = Eio.Path.native_exn (cache / "config.cmx") in
+    run
+      [ "ocamlfind"
+      ; "ocamlopt"
+      ; "-package"
+      ; "ghola"
+      ; "-c"
+      ; src_file_name dirs
+      ; "-o"
+      ; obj
+      ]
+    >>= fun () ->
+    run
+      [ "ocamlfind"
+      ; "ocamlopt"
+      ; "-package"
+      ; "ghola"
+      ; "-linkpkg"
+      ; obj
+      ; "-o"
+      ; "config.exe"
+      ]
+    >>= fun () -> install "config.exe"
 ;;
 
 let mtime path =
   match Eio.Path.stat ~follow:true path with
   | st -> Some st.Eio.File.Stat.mtime
   | exception _ -> None
-;;
-
-let copy src ~to_ =
-  let tmp =
-    match Eio.Path.split to_ with
-    | Some (dir, leaf) -> dir / (leaf ^ ".tmp")
-    | None -> invalid_arg "copy: destination has no parent directory"
-  in
-  let cleanup () =
-    try Eio.Path.unlink tmp with
-    | _ -> ()
-  in
-  try
-    cleanup ();
-    Eio.Path.(load src |> save ~create:(`Exclusive 0o755) tmp);
-    Eio.Path.rename tmp to_;
-    Ok ()
-  with
-  | Eio.Io _ as e ->
-    cleanup ();
-    Error
-      (Fmt.str "Failed to copy %a to %a: %a" Eio.Path.pp src Eio.Path.pp to_ Eio.Exn.pp e)
-;;
-
-let detect_compile Directories.{ config = dir; _ } =
-  let open Eio.Path in
-  let try_script () =
-    let script_file = dir / "build" in
-    if is_file script_file
-    then
-      if is_executable script_file
-      then (
-        print_endline
-        @@ "Ghola will use build script at "
-        ^ native_exn script_file
-        ^ " to recompile.";
-        Some (Script (native_exn script_file)))
-      else (
-        print_endline
-        @@ "Ghola will not use build script, because "
-        ^ native_exn script_file
-        ^ " is not executable";
-        None)
-    else None
-  in
-  let try_nix_flake () =
-    let flake_file = dir / "flake.nix" in
-    if is_file flake_file
-    then (
-      print_endline
-      @@ "Ghola will use nix flake at "
-      ^ native_exn flake_file
-      ^ " to recompile";
-      Some NixFlake)
-    else None
-  in
-  let try_nix_default () =
-    let nix_file = dir / "default.nix" in
-    if is_file nix_file
-    then (
-      print_endline
-      @@ "Ghola will use nix file at "
-      ^ native_exn nix_file
-      ^ " to recompile";
-      Some NixDefault)
-    else None
-  in
-  let try_dune () =
-    let dune_file = dir / "dune-project" in
-    if is_file dune_file
-    then (
-      print_endline @@ "Ghola will use dune build at " ^ native_exn dir ^ " to recompile";
-      Some Dune)
-    else None
-  in
-  let use_ocamlopt () =
-    print_endline @@ "Ghola will use ocamlopt at " ^ native_exn dir ^ " to recompile";
-    Ocamlopt
-  in
-  match
-    List.find_map (fun f -> f ()) [ try_script; try_nix_flake; try_nix_default; try_dune ]
-  with
-  | Some meth -> meth
-  | None -> use_ocamlopt ()
-;;
-
-let report_errors dirs =
-  try
-    let err_file = Directories.err_file dirs in
-    let errs = Eio.Path.load err_file in
-    if not @@ String.is_empty errs
-    then (
-      prerr_endline "Errors detected while compiling Ghola config";
-      prerr_string errs;
-      prerr_string ("Check " ^ Eio.Path.native_exn err_file))
-  with
-  | _ -> ()
 ;;
 
 let should_compile dirs = function
@@ -130,66 +107,37 @@ let should_compile dirs = function
   | _ -> true
 ;;
 
-let compile mgr dirs meth =
-  let open Result in
-  let cwd = Directories.(dirs.config) in
-  let bin_file = Directories.bin_file dirs in
-  let src_file = Directories.src_file dirs in
-  let err_file = Directories.err_file dirs in
-  let copy_bin file =
-    match copy file ~to_:bin_file with
-    | Ok () -> Ok ()
-    | Error msg ->
-      Eio.Path.save ~append:true ~create:(`If_missing 0o644) err_file (msg ^ "\n");
-      Error 1
-  in
-  let run cmd =
-    let open Eio.Process in
-    Eio.Path.with_open_out ~create:(`Or_truncate 0o644) err_file
-    @@ fun stderr ->
-    let fail code msg =
-      Eio.Flow.copy_string (msg ^ "\n") stderr;
-      Error code
-    in
-    Eio.Switch.run
-    @@ fun sw ->
-    match await @@ spawn mgr ~sw ~cwd ~stderr cmd with
-    | `Exited 0 -> Ok ()
-    | `Exited code -> fail code @@ Fmt.str "Process failed with exit code: %d" code
-    | `Signaled _ as status ->
-      fail 1 @@ Fmt.str "Process died: %a" Eio.Process.pp_status status
-    | exception e ->
-      fail 1 @@ Fmt.str "Failed to run %a: %a" Eio.Process.pp_args cmd Eio.Exn.pp e
-  in
-  match meth with
-  | Script path -> run [ path; Eio.Path.native_exn bin_file ]
-  | NixFlake -> run [ "nix"; "build" ] >>= fun () -> copy_bin (cwd / "result/bin/config")
-  | NixDefault -> run [ "nix-build" ] >>= fun () -> copy_bin (cwd / "result/bin/config")
-  | Dune ->
-    run [ "dune"; "build"; "bin/config.exe" ]
-    >>= fun () -> copy_bin (cwd / "_build/default/bin/config.exe")
-  | Ocamlopt ->
-    run
-      [ "ocamlfind"
-      ; "ocamlopt"
-      ; "-package"
-      ; "ghola"
-      ; "-linkpkg"
-      ; Eio.Path.native_exn src_file
-      ; "-o"
-      ; "config.exe"
-      ]
-    >>= fun () -> copy_bin (cwd / "config.exe")
+let report_meth = function
+  | Script -> print_endline "Ghola will use build script to recompile"
+  | NixFlake -> print_endline "Ghola will use nix flake to recompile"
+  | NixDefault -> print_endline "Ghola will use default.nix to recompile"
+  | Dune -> print_endline "Ghola will use dune to recompile"
+  | Ocamlopt -> print_endline "Ghola will use ocamlopt to recompile"
 ;;
 
-let recompile ?(force = false) mgr dirs =
-  let meth = detect_compile dirs in
-  if force || should_compile dirs meth
-  then (
-    match compile mgr dirs meth with
-    | Error _ ->
-      report_errors dirs;
-      false
-    | Ok () -> true)
-  else true
+let report_errors msg dirs =
+  let errors = Directories.err_file_name dirs in
+  Printf.eprintf
+    "Errors detected while compiling Ghola config, check %s for full logs\n"
+    errors;
+  prerr_endline msg
+;;
+
+let recompile ?(force = false) mgr (dirs : _ Directories.t) =
+  match detect_compile dirs.config with
+  | None ->
+    prerr_endline "Could not detect a compilation method, giving up";
+    false
+  | Some meth when (not force) && not (should_compile dirs meth) ->
+    print_endline "Recompilation not necessary, moving on with existing config";
+    true
+  | Some meth ->
+    report_meth meth;
+    (match compile mgr dirs meth with
+     | Ok () ->
+       print_endline "Config compiled succesfully";
+       true
+     | Error msg ->
+       report_errors msg dirs;
+       false)
 ;;

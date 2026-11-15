@@ -24,3 +24,5 @@ let run env config =
   in
   config.startup_hook (Lazy.force wm)
 ;;
+
+let start config = Eio_main.run @@ fun env -> run env config
