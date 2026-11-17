@@ -1,18 +1,13 @@
-open Proto
+open Common
 open Containers
-
-type presentation =
-  | Tiled
-  | Floating of Floating_rect.t
 
 type t =
   { proxy : [ `V4 ] River_window.t
   ; node : [ `V4 ] River_node.t
-  ; mutable presentation : presentation
   ; mutable dimensions : Rect.t
   ; mutable title : string option
   ; mutable app_id : string option
-  ; mutable identifier : string option
+  ; mutable identifier : string
   ; mutable parent : t option
   ; mutable min_width : int32
   ; mutable max_width : int32
@@ -23,12 +18,11 @@ type t =
 let create proxy ~handler =
   let window =
     { proxy
-    ; presentation = Tiled
     ; node = River_window.get_node proxy (new River_node.v4)
     ; dimensions = Rect.empty
     ; title = None
     ; app_id = None
-    ; identifier = None
+    ; identifier = ""
     ; parent = None
     ; min_width = 0l
     ; max_width = 0l
@@ -46,18 +40,6 @@ let destroy window =
 ;;
 
 let equal : t -> t -> bool = Equal.physical
-
-let is_tiled window =
-  match window.presentation with
-  | Tiled -> true
-  | _ -> false
-;;
-
-let is_floating window =
-  match window.presentation with
-  | Floating _ -> true
-  | _ -> false
-;;
 
 let is_fixed_sized window =
   let open Int32 in

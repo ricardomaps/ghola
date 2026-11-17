@@ -1,19 +1,24 @@
 open Containers
+open Common
 
-type ('a, 'l) workspace =
+type window_id = string
+type output_name = int32
+
+type 'layout workspace =
   { tag : string
-  ; layout : 'l
-  ; stack : 'a Zipper.t option
+  ; layout : 'layout
+  ; stack : window_id Zipper.t option
   }
 
-type ('a, 'l, 'o) screen =
-  { workspace : ('a, 'l) workspace
-  ; output : Output.t
+type 'layout screen =
+  { workspace : 'layout workspace
+  ; output : output_name
   }
 
-type ('a, 'l, 'o) t =
-  { visible : ('a, 'l, 'o) screen list
-  ; hidden : ('a, 'l) workspace list
+type 'layout t =
+  { visible : 'layout screen list
+  ; hidden : 'layout workspace list
+  ; floating : Floating_rect.t StringMap.t
   }
 
 let create layout tags =
@@ -21,23 +26,23 @@ let create layout tags =
   then invalid_arg "Window_set.create called with empty tag list"
   else (
     let workspaces = List.map (fun tag -> { tag; layout; stack = None }) tags in
-    { visible = []; hidden = workspaces })
+    { visible = []; hidden = workspaces; floating = StringMap.empty })
 ;;
 
 (* TODO: think about what to do when there are more screens than workspaces *)
 let add_screen output window_set =
   let screen = { output; workspace = List.hd window_set.hidden } in
-  { visible = screen :: window_set.visible; hidden = List.tl window_set.hidden }
+  { window_set with visible = screen :: window_set.visible; hidden = List.tl window_set.hidden }
 ;;
 
 let remove_screen output window_set =
   let screen =
-    List.find (fun screen -> Stdlib.( == ) screen.output output) window_set.visible
+    List.find (fun screen -> Int32.equal screen.output output) window_set.visible
   in
   let visible =
-    List.filter (fun screen -> Stdlib.( != ) screen.output output) window_set.visible
+    List.filter (fun screen -> not @@ Int32.equal screen.output output) window_set.visible
   in
-  { visible; hidden = screen.workspace :: window_set.hidden }
+  { window_set with visible; hidden = screen.workspace :: window_set.hidden }
 ;;
 
 let current_workspace { visible; hidden } =
@@ -99,7 +104,7 @@ let insert_up window =
 
 let lookup_workspace output window_set =
   window_set.visible
-  |> List.find_opt (fun screen -> Stdlib.( == ) screen.output output)
+  |> List.find_opt (fun screen -> Int32.equal screen.output output)
   |> Option.map (fun screen -> screen.workspace.tag)
 ;;
 
@@ -109,7 +114,8 @@ let tag_mem tag window_set =
 
 let map_workspaces f window_set =
   let f_screen screen = { screen with workspace = f screen.workspace } in
-  { visible = List.map f_screen window_set.visible
+  { window_set with
+    visible = List.map f_screen window_set.visible
   ; hidden = List.map f window_set.hidden
   }
 ;;
@@ -117,7 +123,8 @@ let map_workspaces f window_set =
 let map_layouts f window_set =
   let f_workspace w = { w with layout = f w.layout } in
   let f_screen s = { s with workspace = f_workspace s.workspace } in
-  { visible = List.map f_screen window_set.visible
+  { window_set with
+    visible = List.map f_screen window_set.visible
   ; hidden = List.map f_workspace window_set.hidden
   }
 ;;
@@ -150,7 +157,8 @@ let view tag window_set =
        (match window_set.visible with
         | [] -> { window_set with hidden = workspace :: rest }
         | current :: visible ->
-          { visible = { current with workspace } :: visible
+          { window_set with
+            visible = { current with workspace } :: visible
           ; hidden = current.workspace :: rest
           }))
 ;;
@@ -172,8 +180,8 @@ let greedy_view tag window_set =
       { window_set with visible = current :: screen :: visible })
 ;;
 
-let focus_window (window : 'a) (window_set : ('a, 'b, 'c) t) =
-  let focused ss = Option.equal Stdlib.( == ) (Some window) (focused_window ss) in
+let focus_window window window_set =
+  let focused ss = Option.equal String.equal (Some window) (focused_window ss) in
   let rec go ss = if focused ss then ss else go (focus_up ss) in
   if focused window_set
   then window_set
@@ -185,13 +193,24 @@ let focus_window (window : 'a) (window_set : ('a, 'b, 'c) t) =
 let remove_window window window_set =
   let delete_from_workspace w =
     let open Option in
-    { w with stack = w.stack >>= Zipper.filter (Stdlib.( != ) window) }
+    { w with stack = w.stack >>= Zipper.filter (String.(<>) window) }
   in
   let delete_from_screen s = { s with workspace = delete_from_workspace s.workspace } in
   { visible = List.map delete_from_screen window_set.visible
   ; hidden = List.map delete_from_workspace window_set.hidden
+  ; floating = StringMap.remove window window_set.floating
   }
 ;;
+
+let float window float_rect window_set =
+  { window_set with
+    floating = StringMap.add window float_rect window_set.floating
+  }
+
+let tile window window_set =
+  { window_set with
+    floating = StringMap.remove window window_set.floating
+  }
 
 let on_workspace tag f window_set =
   map_workspaces (fun w -> if String.equal w.tag tag then f w else w) window_set
@@ -203,7 +222,7 @@ let shift_window tag window window_set =
     window_set
     |> on_workspace from (fun workspace ->
       let open Option in
-      { workspace with stack = workspace.stack >>= Zipper.filter (Stdlib.( != ) window) })
+      { workspace with stack = workspace.stack >>= Zipper.filter (String.(<>) window) })
     |> on_workspace tag (fun workspace ->
       { workspace with
         stack =

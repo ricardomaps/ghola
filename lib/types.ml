@@ -1,4 +1,5 @@
-open Proto
+open! Containers
+open Common
 
 module rec Wm : sig
   type t =
@@ -8,10 +9,12 @@ module rec Wm : sig
     ; layer_shell_proxy : [ `V1 ] River_layer_shell.t
     ; queue : (unit -> unit) Queue.t
     ; env : Eio_unix.Stdenv.base
-    ; mutable window_set : (Window.t, Layout.t, Output.t) Window_set.t
+    ; mutable window_set : Layout.t Window_set.t
     ; mutable seats : Seat.t list
+    ; mutable windows : Window.t StringMap.t
+    ; mutable outputs : Output.t Int32Map.t
     ; mutable layer_focus : bool
-    ; mutable hovered_window : Window.t option
+    ; mutable hovered_window : Window_set.window_id option
     }
 end =
   Wm
@@ -19,7 +22,7 @@ end =
 and Config : sig
   type t =
     { keys : t -> ((River_modifier.t * Xkbcommon.Keysym.t) * (Wm.t -> unit)) list
-    ; pointer_bindings : ((River_modifier.t * Button.t) * (Window.t -> Wm.t -> unit)) list
+    ; pointer_bindings : ((River_modifier.t * Button.t) * (Window_set.window_id -> Wm.t -> unit)) list
     ; terminal : string
     ; modifier : River_modifier.t
     ; workspaces : string list
@@ -29,7 +32,7 @@ and Config : sig
     ; normal_border_color : Color.t
     ; focused_border_color : Color.t
     ; startup_hook : Wm.t -> unit
-    ; manage_hook : Window.t -> Wm.t -> unit
+    ; manage_hook : Window_set.window_id -> Wm.t -> unit
     }
 end =
   Config
@@ -44,9 +47,9 @@ and Layout : sig
 
     val run_layout
       :  Wm.t
-      -> (Window.t, t) Window_set.workspace
+      -> t Window_set.workspace
       -> Rect.t
-      -> (Rect.t * Window.t) list * t option
+      -> (Rect.t * Window_set.window_id) list * t option
 
     val handle_message : Wm.t -> t -> Message.t -> t option
   end

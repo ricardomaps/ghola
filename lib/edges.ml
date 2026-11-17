@@ -1,4 +1,4 @@
-include Proto.River_edges
+include Common.River_edges
 open Containers
 open Int32
 

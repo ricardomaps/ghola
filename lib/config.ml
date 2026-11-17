@@ -1,5 +1,5 @@
 include Types.Config
-open Proto
+open Common
 open Containers
 
 let keys { modifier; terminal; workspaces; _ } =
@@ -63,7 +63,10 @@ let startup_hook _ = ()
 
 let manage_hook =
   let open Manage_hook in
-  let do_use_ssd : unit t = fun window _ -> Proto.River_window.use_ssd window.proxy in
+  let do_use_ssd : unit t = fun window_id wm ->
+    let window = Wm.get_window window_id wm in
+    River_window.use_ssd window.proxy
+  in
   compose_all Infix.[ do_use_ssd; app_id =? "org.squidowl.halloy" ==> do_float ]
 ;;
 

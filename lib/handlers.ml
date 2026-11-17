@@ -1,4 +1,4 @@
-open Proto
+open Common
 open Containers
 
 type 'a user_data =
@@ -33,9 +33,13 @@ let output_handler (wm : Wm.t) output =
 
     method on_removed _ =
       Output.destroy output;
-      wm.window_set <- Window_set.remove_screen output wm.window_set
+      wm.window_set <- Window_set.remove_screen output.name wm.window_set
 
-    method on_wl_output _ ~name:_ = ()
+    method on_wl_output _ ~name =
+      output.name <- name;
+      Wm.add_output name output wm;
+      Wm.windows (Window_set.add_screen name) wm
+
     method on_position data ~x ~y = output.geometry <- { output.geometry with x; y }
 
     method on_dimensions data ~width ~height =
@@ -60,7 +64,7 @@ let seat_handler (wm : Wm.t) seat =
 
     method on_window_interaction proxy ~window =
       let (Window window) = user_data window in
-      Wm.windows (Window_set.focus_window window) wm
+      Wm.windows (Window_set.focus_window window.identifier) wm
 
     method on_removed _ =
       Seat.destroy seat;
@@ -70,8 +74,8 @@ let seat_handler (wm : Wm.t) seat =
 
     method on_pointer_enter proxy ~window =
       let (Window window) = user_data window in
-      wm.hovered_window <- Some window;
-      if wm.config.focus_follows_mouse then Wm.windows (Window_set.focus_window window) wm
+      wm.hovered_window <- Some window.identifier;
+      if wm.config.focus_follows_mouse then Wm.windows (Window_set.focus_window window.identifier) wm
 
     method on_op_release _ = Wm.cancel_operation seat wm
 
@@ -99,21 +103,21 @@ let window_handler wm window =
     method bind_version = `V4
     method user_data = User_data (Window window)
     method on_pointer_resize_requested _ ~seat ~edges = ()
-    method on_pointer_move_requested _ ~seat:_ = Wm.float window wm
+    method on_pointer_move_requested _ ~seat:_ = Wm.float window.identifier wm
 
     method on_dimensions data ~width ~height =
       window.dimensions <- { window.dimensions with w = width; h = height }
 
     method on_closed _ =
       Window.destroy window;
-      Wm.windows (Window_set.remove_window window) wm;
+      Wm.windows (Window_set.remove_window window.identifier) wm;
       List.iter
         (fun (seat : Seat.t) ->
            let w_opt = Option.map Operation.window seat.operation in
-           if Option.equal Window.equal w_opt (Some window)
+           if Option.equal String.equal w_opt (Some window.identifier)
            then Wm.cancel_operation seat wm)
         wm.seats;
-      if Option.equal Window.equal wm.hovered_window (Some window)
+      if Option.equal String.equal wm.hovered_window (Some window.identifier)
       then wm.hovered_window <- None
 
     method on_unreliable_pid _ ~unreliable_pid:_ = ()
@@ -133,7 +137,11 @@ let window_handler wm window =
 
     method on_minimize_requested _ = ()
     method on_maximize_requested _ = ()
-    method on_identifier data ~identifier = window.identifier <- Some identifier
+    method on_identifier data ~identifier =
+      window.identifier <- identifier;
+      Wm.add_window identifier window wm;
+      Wm.windows (Window_set.insert_up window.identifier) wm
+      
     method on_fullscreen_requested _ ~output:_ = ()
     method on_exit_fullscreen_requested _ = ()
 
@@ -166,13 +174,12 @@ let window_manager_handler (wm : Types.Wm.t Lazy.t) =
     method on_window data proxy =
       let (lazy wm) = wm in
       let window = Window.create proxy ~handler:(window_handler wm) in
-      Wm.windows (Window_set.insert_up window) wm;
       Wm.defer wm (fun () ->
-        Option.bind window.parent (fun parent -> Window_set.find_tag parent wm.window_set)
-        |> Option.iter (fun tag -> Wm.windows (Window_set.shift_window tag window) wm);
+        Option.bind window.parent (fun parent -> Window_set.find_tag parent.identifier wm.window_set)
+        |> Option.iter (fun tag -> Wm.windows (Window_set.shift_window tag window.identifier) wm);
         if Window.has_parent window || Window.is_fixed_sized window
-        then window.presentation <- Floating Floating_rect.default;
-        wm.config.manage_hook window wm)
+        then Wm.windows (Window_set.float window.identifier Floating_rect.default) wm;
+        wm.config.manage_hook window.identifier wm)
 
     method on_seat _ proxy =
       let (lazy wm) = wm in
@@ -195,14 +202,12 @@ let window_manager_handler (wm : Types.Wm.t Lazy.t) =
 
     method on_output _ proxy =
       let (lazy wm) = wm in
-      let output =
-        Output.create
+      ignore
+        (Output.create
           proxy
           ~output_handler:(output_handler wm)
           ~shell_proxy:wm.layer_shell_proxy
-          ~shell_handler:(shell_output_handler wm)
-      in
-      wm.window_set <- Window_set.add_screen output wm.window_set
+          ~shell_handler:(shell_output_handler wm))
 
     method on_render_start proxy =
       let (lazy wm) = wm in
@@ -218,29 +223,4 @@ let window_manager_handler (wm : Types.Wm.t Lazy.t) =
     method on_session_unlocked _ = ()
     method on_session_locked _ = ()
   end
-;;
-
-let run env =
-  let open Wayland in
-  Eio.Switch.run
-  @@ fun sw ->
-  let transport = Unix_transport.connect ~sw ~net:env#net () in
-  let display = Client.connect ~sw transport in
-  let registry = Registry.of_display display in
-  let config = Config.default in
-  let rec wm : Wm.t Lazy.t =
-    lazy
-      { config
-      ; env
-      ; window_manager_proxy = Registry.bind registry (window_manager_handler wm)
-      ; xkb_bindings_proxy = Registry.bind registry (new River_xkb_bindings.v2)
-      ; layer_shell_proxy = Registry.bind registry (new River_layer_shell.v1)
-      ; window_set = Window_set.create config.layout config.workspaces
-      ; queue = Queue.create ()
-      ; seats = []
-      ; layer_focus = false
-      ; hovered_window = None
-      }
-  in
-  config.startup_hook (Lazy.force wm)
 ;;

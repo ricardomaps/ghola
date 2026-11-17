@@ -1,6 +1,6 @@
 open Containers
 
-type 'a t = Window.t -> Wm.t -> 'a
+type 'a t = string -> Wm.t -> 'a
 
 let return x = fun _ _ -> x
 let map f q = fun window wm -> f (q window wm)
@@ -8,8 +8,14 @@ let map2 f a b = fun w wm -> f (a w wm) (b w wm)
 let bind q f = fun w wm -> f (q w wm) w wm
 let both a b = map2 (fun x y -> x, y) a b
 let join qq = fun w wm -> qq w wm w wm
-let app_id : string t = fun window _ -> Option.get_or ~default:"" window.app_id
-let title : string t = fun window _ -> Option.get_or ~default:"" window.title
+let app_id : string t = fun window_id wm ->
+  let window = Wm.get_window window_id wm in
+  Option.get_or ~default:"" window.app_id
+
+let title : string t = fun window_id wm ->
+  let window = Wm.get_window window_id wm in
+  Option.get_or ~default:"" window.title
+
 let is query s = map (String.equal s) query
 let contains query sub = map (fun v -> String.mem ~sub v) query
 let not query = map not query
@@ -28,12 +34,16 @@ let compose_all hooks = List.fold_left compose nop hooks
 let when_ query hook = fun window wm -> if query window wm then hook window wm
 
 let do_float : unit t =
-  fun window _ -> window.presentation <- Floating Floating_rect.default
+  fun window_id wm ->
+  Wm.windows (Window_set.float window_id Floating_rect.default) wm
 ;;
 
-let do_float_rect rect : unit t = fun window _ -> window.presentation <- Floating rect
-let will_float = fun window _ -> Window.is_floating window
-let do_tile = fun (window : Window.t) _ -> window.presentation <- Tiled
+let do_float_rect rect : unit t = 
+  fun window_id wm ->
+  Wm.windows (Window_set.float window_id rect) wm
+
+let will_float window_id wm = Wm.is_floating window_id wm
+let do_tile window_id = Wm.windows (Window_set.tile window_id)
 let do_shift tag = fun window wm -> Wm.windows (Window_set.shift_window tag window) wm
 let do_f f = fun _ wm -> Wm.windows f wm
 

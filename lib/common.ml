@@ -1,3 +1,5 @@
+open! Containers
+
 module River_window_manager =
   River.River_window_management_v1_client.River_window_manager_v1
 
@@ -20,3 +22,6 @@ module River_pointer_binding =
   River.River_window_management_v1_client.River_pointer_binding_v1
 
 module River_modifier = River.River_window_management_v1_client.River_seat_v1.Modifiers
+
+module StringMap = Map.Make(String)
+module Int32Map = Map.Make(Int32)

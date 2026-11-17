@@ -1,9 +1,10 @@
-open Proto
+open Common
 open Containers
 
 type t =
   { proxy : [ `V4 ] River_output.t
   ; layer_shell_proxy : [ `V1 ] River_layer_shell_output.t
+  ; mutable name : int32
   ; mutable geometry : Rect.t
   ; mutable working_geometry : Rect.t
   }
@@ -13,7 +14,7 @@ let create proxy ~output_handler ~shell_proxy ~shell_handler =
     River_layer_shell.get_output shell_proxy ~output:proxy (shell_handler proxy)
   in
   let output =
-    { proxy; geometry = Rect.empty; layer_shell_proxy; working_geometry = Rect.empty }
+    { proxy; geometry = Rect.empty; layer_shell_proxy; working_geometry = Rect.empty; name = 0l }
   in
   Wayland.Proxy.Handler.attach proxy (output_handler output);
   output

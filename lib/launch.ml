@@ -1,4 +1,4 @@
-open Proto
+open Common
 open Handlers
 
 let run env config =
@@ -16,6 +16,8 @@ let run env config =
       ; xkb_bindings_proxy = Registry.bind registry (new River_xkb_bindings.v2)
       ; layer_shell_proxy = Registry.bind registry (new River_layer_shell.v1)
       ; window_set = Window_set.create config.layout config.workspaces
+      ; windows = StringMap.empty
+      ; outputs = Int32Map.empty
       ; queue = Queue.create ()
       ; seats = []
       ; layer_focus = false

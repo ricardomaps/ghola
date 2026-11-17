@@ -1,24 +1,24 @@
 (* shamelessly copied from oxbow *)
 type t =
-  | Key_unknown 
-  | Btn_0 
-  | Btn_1 
-  | Btn_2 
-  | Btn_3 
-  | Btn_4 
-  | Btn_5 
-  | Btn_6 
-  | Btn_7 
-  | Btn_8 
-  | Btn_9 
-  | Btn_left 
-  | Btn_right 
-  | Btn_middle 
-  | Btn_side 
-  | Btn_extra 
-  | Btn_forward 
-  | Btn_back 
-  | Btn_task 
+  | Key_unknown
+  | Btn_0
+  | Btn_1
+  | Btn_2
+  | Btn_3
+  | Btn_4
+  | Btn_5
+  | Btn_6
+  | Btn_7
+  | Btn_8
+  | Btn_9
+  | Btn_left
+  | Btn_right
+  | Btn_middle
+  | Btn_side
+  | Btn_extra
+  | Btn_forward
+  | Btn_back
+  | Btn_task
 
 let to_int32 = function
   | Btn_0 -> 0x100l

@@ -1,13 +1,13 @@
 type t =
   | Move of
-      { window : Window.t
+      { window : Window_set.window_id
       ; start_x : int32
       ; start_y : int32
       ; mutable dx : int32
       ; mutable dy : int32
       }
   | Resize of
-      { window : Window.t
+      { window : Window_set.window_id
       ; edges : Edges.t
       ; start_rect : Rect.t
       ; mutable dx : int32
