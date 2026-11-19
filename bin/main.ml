@@ -35,5 +35,5 @@ let () =
       @@ "Could not compile config at "
       ^ config_path
       ^ ", starting ghola with default config";
-      Launch.run env Config.default)
+      Launch.run env Default.default)
 ;;

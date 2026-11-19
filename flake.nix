@@ -35,6 +35,8 @@
               eio
               eio_main
               containers
+              yojson
+              ppx_yojson_conv
             ];
           };
         });

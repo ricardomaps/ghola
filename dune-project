@@ -16,6 +16,5 @@
 (package
  (name ghola)
  (synopsis "Window manager for the River compositor")
- (depends ocaml containers wayland xkbcommon xdg)
- (tags
-  ("add topics" "to describe" your project)))
+ (depends ocaml containers wayland xkbcommon xdg yojson ppx_yojson_conv)
+ (tags ()))

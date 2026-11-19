@@ -1,25 +1,42 @@
-include Types.Wm
 open! Common
 open! Containers
 open Int32
 
+type t =
+  { config : (t, layout) Config.t
+  ; xkb_bindings_proxy : [ `V2 ] River_xkb_bindings.t
+  ; window_manager_proxy : [ `V4 ] River_window_manager.t
+  ; layer_shell_proxy : [ `V1 ] River_layer_shell.t
+  ; queue : (unit -> unit) Queue.t
+  ; env : Eio_unix.Stdenv.base
+  ; mutable window_set : layout Window_set.t
+  ; mutable seats : Seat.t list
+  ; mutable windows : Window.t StringMap.t
+  ; mutable outputs : Output.t Int32Map.t
+  ; mutable layer_focus : bool
+  ; mutable hovered_window : Window_set.window_id option
+  }
+
+and layout = Layout : (module Layout.S with type t = 'a and type wm = t) * 'a -> layout
+
+module type GholaLayout = sig
+  include Layout.S with type wm = t
+end
+
 let get_window window_id wm =
   StringMap.get window_id wm.windows
   |> Option.get_exn_or ("No window under identifier " ^ window_id)
+;;
 
 let get_output output_name wm =
   Int32Map.get output_name wm.outputs
   |> Option.get_exn_or ("No output under name " ^ Int32.to_string output_name)
+;;
 
-let add_window id window wm =
-  wm.windows <- StringMap.add id window wm.windows
-
-let add_output name output wm =
-  wm.outputs <- Int32Map.add name output wm.outputs
-
+let add_window id window wm = wm.windows <- StringMap.add id window wm.windows
+let add_output name output wm = wm.outputs <- Int32Map.add name output wm.outputs
 let is_floating wm window_id = StringMap.mem window_id wm.window_set.floating
-
-let is_tiled wm window_id = not @@ is_floating wm window_id
+let is_tiled wm = Fun.negate (is_floating wm)
 
 let spawn cmd wm =
   Eio.Process.run
@@ -61,7 +78,9 @@ let add_seat seat wm = wm.seats <- wm.seats @ [ seat ]
 let screen_at x y wm =
   wm.window_set.visible
   |> List.find_opt (fun (screen : _ Window_set.screen) ->
-    let output = Option.get_exn_or "No such output" (Int32Map.get screen.output wm.outputs) in
+    let output =
+      Option.get_exn_or "No such output" (Int32Map.get screen.output wm.outputs)
+    in
     Rect.is_point_within x y output.geometry)
 ;;
 
@@ -72,16 +91,14 @@ let float window_id wm =
     let window = get_window window_id wm in
     let d = window.dimensions in
     let screen =
-      Option.value
-        ~default:current
-        (screen_at (d.x + (d.w / 2l)) (d.y + (d.h / 2l)) wm)
+      Option.value ~default:current (screen_at (d.x + (d.w / 2l)) (d.y + (d.h / 2l)) wm)
     in
     let output = get_output screen.output wm in
     let float_rect = Floating_rect.of_rects ~inner:d ~outer:output.geometry in
     windows
-      (fun ws -> 
-        Window_set.shift_window screen.workspace.tag window_id ws
-        |> Window_set.float window_id float_rect)
+      (fun ws ->
+         Window_set.shift_window screen.workspace.tag window_id ws
+         |> Window_set.float window_id ~rel:float_rect)
       wm
 ;;
 
@@ -91,14 +108,13 @@ let tile_window wm =
 ;;
 
 let float_window wm =
-  Window_set.focused_window wm.window_set
-  |> Option.iter (fun w -> float w wm)
+  Window_set.focused_window wm.window_set |> Option.iter (fun w -> float w wm)
 ;;
 
 let send_message message wm =
   windows
     (Window_set.map_current_workspace (fun current ->
-       let (Layout.Layout ((module L), layout)) = current.layout in
+       let (Layout ((module L), layout)) = current.layout in
        match L.handle_message wm layout message with
        | None -> current
        | Some layout -> { current with layout = Layout ((module L), layout) }))
@@ -108,7 +124,7 @@ let send_message message wm =
 let broadcast_message message wm =
   Window_set.map_workspaces
     (fun workspace ->
-       let (Layout.Layout ((module L), layout)) = workspace.layout in
+       let (Layout ((module L), layout)) = workspace.layout in
        match L.handle_message wm layout message with
        | None -> workspace
        | Some layout -> { workspace with layout = Layout ((module L), layout) })
@@ -119,7 +135,7 @@ let set_layout layout wm =
   wm.window_set
   <- Window_set.map_current_workspace
        (fun current ->
-          let (Layout.Layout ((module L), l)) = current.layout in
+          let (Layout ((module L), l)) = current.layout in
           ignore @@ L.handle_message wm l Message.ReleaseResources;
           { current with layout })
        wm.window_set
@@ -187,24 +203,25 @@ let floating_placements wm (screen : _ Window_set.screen) =
   let output = get_output screen.output wm in
   Option.map_or ~default:[] Zipper.to_list screen.workspace.stack
   |> List.filter_map (fun w ->
-    StringMap.get w wm.window_set.floating
-    |> Option.map (fun float_rect -> (float_rect, w)))
-  |> List.map (fun (float_rect, w) -> 
-      let window = get_window w wm in
-      let rect =
-        Window.place_floating
-          window
-          float_rect
-          ~outer:output.geometry
-          ~border:(Int32.of_int wm.config.border_width)
-      in (rect, w))
+    StringMap.get w wm.window_set.floating |> Option.map (fun float_rect -> float_rect, w))
+  |> List.map (fun (float_rect, w) ->
+    let window = get_window w wm in
+    let rect =
+      Window.place_floating
+        window
+        float_rect
+        ~outer:output.geometry
+        ~border:(Int32.of_int wm.config.border_width)
+    in
+    rect, w)
 ;;
 
 let layout_screen wm (screen : _ Window_set.screen) =
-  let open Layout in
   let output = get_output screen.output wm in
   let (Layout ((module L), state)) = screen.workspace.layout in
-  let tiled_stack = Option.bind screen.workspace.stack (Zipper.filter (is_floating wm)) in
+  let tiled_stack =
+    Option.bind screen.workspace.stack (Zipper.filter (is_tiled wm))
+  in
   let tiled_workspace = { screen.workspace with layout = state; stack = tiled_stack } in
   let tiles, new_state = L.run_layout wm tiled_workspace output.working_geometry in
   let floats = floating_placements wm screen in
@@ -216,7 +233,7 @@ let layout_screen wm (screen : _ Window_set.screen) =
         workspace = { screen.workspace with layout = Layout ((module L), s) }
       }
   in
-  floats @ tiles, screen
+  (floats @ tiles), screen
 ;;
 
 let arrange wm =
@@ -264,7 +281,7 @@ let place wm ~focused ((rect : Rect.t), window_id) =
 let hide_others wm placed =
   let visible = List.map snd placed in
   Window_set.all_windows wm.window_set
-  |> List.filter (fun w -> not @@ List.mem ~eq:(String.equal) w visible)
+  |> List.filter (fun w -> not @@ List.mem ~eq:String.equal w visible)
   |> List.map (fun w -> get_window w wm)
   |> List.iter (fun (w : Window.t) -> River_window.hide w.proxy)
 ;;
@@ -273,9 +290,7 @@ let focus wm =
   match Window_set.focused_window wm.window_set with
   | Some window_id when not wm.layer_focus ->
     let window = get_window window_id wm in
-    if is_floating wm window_id then (
-      River_node.place_top window.node
-    );
+    if is_floating wm window_id then River_node.place_top window.node;
     List.iter
       (fun (seat : Seat.t) -> River_seat.focus_window seat.proxy ~window:window.proxy)
       wm.seats

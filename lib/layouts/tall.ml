@@ -1,8 +1,13 @@
+open Ppx_yojson_conv_lib.Yojson_conv.Primitives
+
+type wm = Wm.t
+
 type t =
   { nmaster : int
   ; ratio_increment : float
   ; ratio : float
   }
+[@@deriving yojson]
 
 type Message.t += IncMasterN of int | Expand | Shrink
 

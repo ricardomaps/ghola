@@ -1,7 +1,7 @@
-open Types.Layout
+open Wm
 open Message
 
-let full = Layout ((module Full), ())
+let full = Layout ((module Full), Full.Full)
 
 type Message.t +=
   | IncMasterN = Tall.IncMasterN
@@ -13,7 +13,7 @@ let tall ~nmaster ~ratio_increment ~ratio =
   Layout ((module Tall), l)
 ;;
 
-let mirror (Layout ((module L), l)) = Layout ((module Mirror.Make (L)), l)
+let mirror (Layout ((module L), l)) = Layout ((module Mirror.Make (L)), Mirror l)
 
 type Message.t +=
   | FirstLayout = Choose.FirstLayout

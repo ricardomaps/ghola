@@ -1,38 +1,61 @@
+open Ppx_yojson_conv_lib.Yojson_conv.Primitives
 open Containers
 open Common
 
-type window_id = string
-type output_name = int32
+type window_id = string [@@deriving yojson]
+type output_name = int32 [@@deriving yojson]
+
+module WindowMap = struct
+  open Ppx_yojson_conv_lib.Yojson_conv.Primitives
+  module M = Map.Make (String)
+  include M
+
+  let yojson_of_t yojson_of_a m =
+    M.bindings m |> List.map (Pair.map_snd yojson_of_a) |> [%yojson_of: (string * _) list]
+  ;;
+
+  let t_of_yojson a_of_yojson json =
+    [%of_yojson: (string * _) list] json
+    |> List.map (Pair.map_snd a_of_yojson)
+    |> M.of_list
+  ;;
+end
 
 type 'layout workspace =
   { tag : string
   ; layout : 'layout
   ; stack : window_id Zipper.t option
   }
+[@@deriving yojson]
 
 type 'layout screen =
   { workspace : 'layout workspace
   ; output : output_name
   }
+[@@deriving yojson]
 
 type 'layout t =
   { visible : 'layout screen list
   ; hidden : 'layout workspace list
-  ; floating : Floating_rect.t StringMap.t
+  ; floating : Floating_rect.t WindowMap.t
   }
+[@@deriving yojson]
 
 let create layout tags =
   if List.is_empty tags
   then invalid_arg "Window_set.create called with empty tag list"
   else (
     let workspaces = List.map (fun tag -> { tag; layout; stack = None }) tags in
-    { visible = []; hidden = workspaces; floating = StringMap.empty })
+    { visible = []; hidden = workspaces; floating = WindowMap.empty })
 ;;
 
 (* TODO: think about what to do when there are more screens than workspaces *)
 let add_screen output window_set =
   let screen = { output; workspace = List.hd window_set.hidden } in
-  { window_set with visible = screen :: window_set.visible; hidden = List.tl window_set.hidden }
+  { window_set with
+    visible = screen :: window_set.visible
+  ; hidden = List.tl window_set.hidden
+  }
 ;;
 
 let remove_screen output window_set =
@@ -142,18 +165,22 @@ let find_tag window window_set =
   |> Option.map (fun workspace -> workspace.tag)
 ;;
 
+let find_pop ~f l =
+  let rec go acc = function
+    | [] -> None
+    | x :: xs when f x -> Some (x, List.rev acc @ xs)
+    | x :: xs -> go (x :: acc) xs
+  in
+  go [] l
+;;
+
 let view tag window_set =
-  match
-    List.find_idx (fun scr -> String.equal scr.workspace.tag tag) window_set.visible
-  with
-  | Some (idx, screen) ->
-    let rest = List.remove_at_idx idx window_set.visible in
-    { window_set with visible = screen :: rest }
+  match find_pop window_set.visible ~f:(fun scr -> String.(scr.workspace.tag = tag)) with
+  | Some (screen, rest) -> { window_set with visible = screen :: rest }
   | None ->
-    (match List.find_idx (fun w -> String.equal w.tag tag) window_set.hidden with
+    (match find_pop window_set.hidden ~f:(fun w -> String.(w.tag = tag)) with
      | None -> window_set
-     | Some (idx, workspace) ->
-       let rest = List.remove_at_idx idx window_set.hidden in
+     | Some (workspace, rest) ->
        (match window_set.visible with
         | [] -> { window_set with hidden = workspace :: rest }
         | current :: visible ->
@@ -193,24 +220,22 @@ let focus_window window window_set =
 let remove_window window window_set =
   let delete_from_workspace w =
     let open Option in
-    { w with stack = w.stack >>= Zipper.filter (String.(<>) window) }
+    { w with stack = w.stack >>= Zipper.filter (String.( <> ) window) }
   in
   let delete_from_screen s = { s with workspace = delete_from_workspace s.workspace } in
   { visible = List.map delete_from_screen window_set.visible
   ; hidden = List.map delete_from_workspace window_set.hidden
-  ; floating = StringMap.remove window window_set.floating
+  ; floating = WindowMap.remove window window_set.floating
   }
 ;;
 
-let float window float_rect window_set =
-  { window_set with
-    floating = StringMap.add window float_rect window_set.floating
-  }
+let float window ?(rel = Floating_rect.default) window_set =
+  { window_set with floating = WindowMap.add window rel window_set.floating }
+;;
 
 let tile window window_set =
-  { window_set with
-    floating = StringMap.remove window window_set.floating
-  }
+  { window_set with floating = WindowMap.remove window window_set.floating }
+;;
 
 let on_workspace tag f window_set =
   map_workspaces (fun w -> if String.equal w.tag tag then f w else w) window_set
@@ -222,7 +247,7 @@ let shift_window tag window window_set =
     window_set
     |> on_workspace from (fun workspace ->
       let open Option in
-      { workspace with stack = workspace.stack >>= Zipper.filter (String.(<>) window) })
+      { workspace with stack = workspace.stack >>= Zipper.filter (String.( <> ) window) })
     |> on_workspace tag (fun workspace ->
       { workspace with
         stack =

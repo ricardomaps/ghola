@@ -1,4 +1,5 @@
-type t = unit
+type wm = Wm.t
+type t = Full [@@deriving yojson]
 
 let description _ = "Full"
 let handle_message _ _ _ = None

@@ -2,16 +2,20 @@ open Message
 
 type Message.t += FirstLayout | NextLayout | NextNoWrap | JumpToLayout of string
 
-module Make (L : Layout.S) (R : Layout.S) = struct
+module Make (L : Glayout.S) (R : Glayout.S) = struct
+  type wm = Wm.t
+
   type clr =
     | CL
     | CR
+  [@@deriving yojson]
 
   type t =
     { current : clr
     ; left : L.t
     ; right : R.t
     }
+  [@@deriving yojson]
 
   let description t =
     match t.current with

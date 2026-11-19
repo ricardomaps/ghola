@@ -1,3 +1,4 @@
+open Ppx_yojson_conv_lib.Yojson_conv.Primitives
 open! Containers
 
 type t =
@@ -6,6 +7,7 @@ type t =
   ; rw : float
   ; rh : float
   }
+[@@deriving yojson]
 
 let of_rects ~(inner : Rect.t) ~(outer : Rect.t) =
   let f = Int32.to_float in

@@ -3,4 +3,6 @@
 (library
  (name ghola)
  (public_name ghola)
+ (preprocess
+  (pps ppx_yojson_conv))
  (libraries river containers wayland xkbcommon eio_main xdg))

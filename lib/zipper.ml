@@ -1,8 +1,11 @@
+open Ppx_yojson_conv_lib.Yojson_conv.Primitives
+
 type 'a t =
   { up : 'a list
   ; focus : 'a
   ; down : 'a list
   }
+[@@deriving yojson]
 
 let singleton x = { focus = x; up = []; down = [] }
 let to_list stack = List.rev stack.up @ (stack.focus :: stack.down)

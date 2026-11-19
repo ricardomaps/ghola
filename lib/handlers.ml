@@ -75,7 +75,8 @@ let seat_handler (wm : Wm.t) seat =
     method on_pointer_enter proxy ~window =
       let (Window window) = user_data window in
       wm.hovered_window <- Some window.identifier;
-      if wm.config.focus_follows_mouse then Wm.windows (Window_set.focus_window window.identifier) wm
+      if wm.config.focus_follows_mouse
+      then Wm.windows (Window_set.focus_window window.identifier) wm
 
     method on_op_release _ = Wm.cancel_operation seat wm
 
@@ -137,11 +138,12 @@ let window_handler wm window =
 
     method on_minimize_requested _ = ()
     method on_maximize_requested _ = ()
+
     method on_identifier data ~identifier =
       window.identifier <- identifier;
       Wm.add_window identifier window wm;
       Wm.windows (Window_set.insert_up window.identifier) wm
-      
+
     method on_fullscreen_requested _ ~output:_ = ()
     method on_exit_fullscreen_requested _ = ()
 
@@ -163,7 +165,7 @@ let pointer_binding_handler (wm : Wm.t) action =
   end
 ;;
 
-let window_manager_handler (wm : Types.Wm.t Lazy.t) =
+let window_manager_handler (wm : Wm.t Lazy.t) =
   object
     inherit [_] River_window_manager.v4
 
@@ -175,10 +177,12 @@ let window_manager_handler (wm : Types.Wm.t Lazy.t) =
       let (lazy wm) = wm in
       let window = Window.create proxy ~handler:(window_handler wm) in
       Wm.defer wm (fun () ->
-        Option.bind window.parent (fun parent -> Window_set.find_tag parent.identifier wm.window_set)
-        |> Option.iter (fun tag -> Wm.windows (Window_set.shift_window tag window.identifier) wm);
+        Option.bind window.parent (fun parent ->
+          Window_set.find_tag parent.identifier wm.window_set)
+        |> Option.iter (fun tag ->
+          Wm.windows (Window_set.shift_window tag window.identifier) wm);
         if Window.has_parent window || Window.is_fixed_sized window
-        then Wm.windows (Window_set.float window.identifier Floating_rect.default) wm;
+        then Wm.windows (Window_set.float window.identifier) wm;
         wm.config.manage_hook window.identifier wm)
 
     method on_seat _ proxy =
@@ -204,10 +208,10 @@ let window_manager_handler (wm : Types.Wm.t Lazy.t) =
       let (lazy wm) = wm in
       ignore
         (Output.create
-          proxy
-          ~output_handler:(output_handler wm)
-          ~shell_proxy:wm.layer_shell_proxy
-          ~shell_handler:(shell_output_handler wm))
+           proxy
+           ~output_handler:(output_handler wm)
+           ~shell_proxy:wm.layer_shell_proxy
+           ~shell_handler:(shell_output_handler wm))
 
     method on_render_start proxy =
       let (lazy wm) = wm in
