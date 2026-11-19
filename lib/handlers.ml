@@ -38,12 +38,16 @@ let output_handler (wm : Wm.t) output =
     method on_wl_output _ ~name =
       output.name <- name;
       Wm.add_output name output wm;
-      Wm.windows (Window_set.add_screen name) wm
+      if not @@ Window_set.output_mem name wm.window_set
+      then Wm.windows (Window_set.add_screen name) wm
 
-    method on_position data ~x ~y = output.geometry <- { output.geometry with x; y }
+    method on_position data ~x ~y =
+      output.geometry <- { output.geometry with x; y };
+      output.working_geometry <- output.geometry
 
     method on_dimensions data ~width ~height =
-      output.geometry <- { output.geometry with w = width; h = height }
+      output.geometry <- { output.geometry with w = width; h = height };
+      output.working_geometry <- output.geometry
   end
 ;;
 
@@ -142,7 +146,8 @@ let window_handler wm window =
     method on_identifier data ~identifier =
       window.identifier <- identifier;
       Wm.add_window identifier window wm;
-      Wm.windows (Window_set.insert_up window.identifier) wm
+      if not @@ Window_set.window_mem identifier wm.window_set
+      then Wm.windows (Window_set.insert_up window.identifier) wm
 
     method on_fullscreen_requested _ ~output:_ = ()
     method on_exit_fullscreen_requested _ = ()
@@ -223,7 +228,14 @@ let window_manager_handler (wm : Wm.t Lazy.t) =
       Wm.manage_start wm;
       River_window_manager.manage_finish wm.window_manager_proxy
 
-    method on_finished _ = Stdlib.exit 0
+    method on_finished _ =
+      let (lazy wm) = wm in
+      if wm.restart
+      then
+        let open Directories in
+        Unix.execv bin_file_name [| bin_file_name |]
+      else Stdlib.exit 0
+
     method on_session_unlocked _ = ()
     method on_session_locked _ = ()
   end

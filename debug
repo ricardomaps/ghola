@@ -1,0 +1,2487 @@
+Recompilation not necessary, moving on with existing config
+going to run!
+creating output
+output width: 1366
+output height: 768
+output x: 0
+output y: 0
+creating seat
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 0 w: 1366 h: 768
+about to fetch output
+got output
+arranged
+placed
+hid others
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+got new exclusive area
+rect = x: 0 y: 0 w: 1366 h: 768manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 0 w: 1366 h: 768
+about to fetch output
+got output
+arranged
+placed
+hid others
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 0 w: 1366 h: 768
+about to fetch output
+got output
+arranged
+placed
+hid others
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 0 w: 1366 h: 768
+about to fetch output
+got output
+arranged
+placed
+hid others
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+got new exclusive area
+rect = x: 0 y: 24 w: 1366 h: 744manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+placed
+hid others
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+placed
+hid others
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+placed
+hid others
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+creating window
+manage sequence
+about to fetch window
+got window
+about to fetch window
+got window
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 1366 h: 7440612e394d97e8799bb3ff9581319c763
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 1366 h: 7440612e394d97e8799bb3ff9581319c763
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 1366 h: 7440612e394d97e8799bb3ff9581319c763
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+Ghola will use ocamlopt to recompile
+Config compiled succesfully
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 1366 h: 7440612e394d97e8799bb3ff9581319c763
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+going to run!
+start render
+end render
+creating output
+output width: 1366
+output height: 768
+output x: 0
+output y: 0
+creating window
+creating seat
+manage sequence
+about to fetch window
+got window
+about to fetch window
+got window
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 0 w: 1366 h: 768
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 0 w: 1366 h: 7680612e394d97e8799bb3ff9581319c763
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+got new exclusive area
+rect = x: 0 y: 24 w: 1366 h: 744manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 1366 h: 7440612e394d97e8799bb3ff9581319c763
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 1366 h: 7440612e394d97e8799bb3ff9581319c763
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 1366 h: 7440612e394d97e8799bb3ff9581319c763
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+creating window
+manage sequence
+about to fetch window
+got window
+about to fetch window
+got window
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+rect = x: 683 y: 24 w: 683 h: 7440612e394d97e8799bb3ff9581319c763
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+rect = x: 683 y: 24 w: 683 h: 7440612e394d97e8799bb3ff9581319c763
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+rect = x: 683 y: 24 w: 683 h: 7440612e394d97e8799bb3ff9581319c763
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+rect = x: 683 y: 24 w: 683 h: 7440612e394d97e8799bb3ff9581319c763
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+rect = x: 683 y: 24 w: 683 h: 7440612e394d97e8799bb3ff9581319c763
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+rect = x: 683 y: 24 w: 683 h: 7440612e394d97e8799bb3ff9581319c763
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+rect = x: 683 y: 24 w: 683 h: 7440612e394d97e8799bb3ff9581319c763
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+rect = x: 683 y: 24 w: 683 h: 7440612e394d97e8799bb3ff9581319c763
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+rect = x: 683 y: 24 w: 683 h: 7440612e394d97e8799bb3ff9581319c763
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+rect = x: 683 y: 24 w: 683 h: 7440612e394d97e8799bb3ff9581319c763
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+rect = x: 683 y: 24 w: 683 h: 7440612e394d97e8799bb3ff9581319c763
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+rect = x: 683 y: 24 w: 683 h: 7440612e394d97e8799bb3ff9581319c763
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+rect = x: 683 y: 24 w: 683 h: 7440612e394d97e8799bb3ff9581319c763
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+rect = x: 683 y: 24 w: 683 h: 7440612e394d97e8799bb3ff9581319c763
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+rect = x: 683 y: 24 w: 683 h: 7440612e394d97e8799bb3ff9581319c763
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+rect = x: 683 y: 24 w: 683 h: 7440612e394d97e8799bb3ff9581319c763
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+creating window
+manage sequence
+about to fetch window
+got window
+about to fetch window
+got window
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+rect = x: 683 y: 24 w: 683 h: 372390b5ec0d1c86eae8ffd6ed12ef62028
+rect = x: 683 y: 396 w: 683 h: 3720612e394d97e8799bb3ff9581319c763
+about to fetch window
+got window
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+rect = x: 683 y: 24 w: 683 h: 372390b5ec0d1c86eae8ffd6ed12ef62028
+rect = x: 683 y: 396 w: 683 h: 3720612e394d97e8799bb3ff9581319c763
+about to fetch window
+got window
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+rect = x: 683 y: 24 w: 683 h: 372390b5ec0d1c86eae8ffd6ed12ef62028
+rect = x: 683 y: 396 w: 683 h: 3720612e394d97e8799bb3ff9581319c763
+about to fetch window
+got window
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+rect = x: 683 y: 24 w: 683 h: 372390b5ec0d1c86eae8ffd6ed12ef62028
+rect = x: 683 y: 396 w: 683 h: 3720612e394d97e8799bb3ff9581319c763
+about to fetch window
+got window
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+rect = x: 683 y: 24 w: 683 h: 372390b5ec0d1c86eae8ffd6ed12ef62028
+rect = x: 683 y: 396 w: 683 h: 3720612e394d97e8799bb3ff9581319c763
+about to fetch window
+got window
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+rect = x: 683 y: 24 w: 683 h: 372390b5ec0d1c86eae8ffd6ed12ef62028
+rect = x: 683 y: 396 w: 683 h: 3720612e394d97e8799bb3ff9581319c763
+about to fetch window
+got window
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+rect = x: 683 y: 24 w: 683 h: 372390b5ec0d1c86eae8ffd6ed12ef62028
+rect = x: 683 y: 396 w: 683 h: 3720612e394d97e8799bb3ff9581319c763
+about to fetch window
+got window
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+rect = x: 683 y: 24 w: 683 h: 372390b5ec0d1c86eae8ffd6ed12ef62028
+rect = x: 683 y: 396 w: 683 h: 3720612e394d97e8799bb3ff9581319c763
+about to fetch window
+got window
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+rect = x: 683 y: 24 w: 683 h: 372390b5ec0d1c86eae8ffd6ed12ef62028
+rect = x: 683 y: 396 w: 683 h: 3720612e394d97e8799bb3ff9581319c763
+about to fetch window
+got window
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+rect = x: 683 y: 24 w: 683 h: 372390b5ec0d1c86eae8ffd6ed12ef62028
+rect = x: 683 y: 396 w: 683 h: 3720612e394d97e8799bb3ff9581319c763
+about to fetch window
+got window
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+rect = x: 683 y: 24 w: 683 h: 372390b5ec0d1c86eae8ffd6ed12ef62028
+rect = x: 683 y: 396 w: 683 h: 3720612e394d97e8799bb3ff9581319c763
+about to fetch window
+got window
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+rect = x: 683 y: 24 w: 683 h: 372390b5ec0d1c86eae8ffd6ed12ef62028
+rect = x: 683 y: 396 w: 683 h: 3720612e394d97e8799bb3ff9581319c763
+about to fetch window
+got window
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+about to fetch window
+got window
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+rect = x: 683 y: 24 w: 683 h: 372390b5ec0d1c86eae8ffd6ed12ef62028
+rect = x: 683 y: 396 w: 683 h: 3720612e394d97e8799bb3ff9581319c763
+about to fetch window
+got window
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+rect = x: 683 y: 24 w: 683 h: 744390b5ec0d1c86eae8ffd6ed12ef62028
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+rect = x: 683 y: 24 w: 683 h: 744390b5ec0d1c86eae8ffd6ed12ef62028
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+rect = x: 683 y: 24 w: 683 h: 744390b5ec0d1c86eae8ffd6ed12ef62028
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+about to fetch window
+got window
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+rect = x: 683 y: 24 w: 683 h: 744390b5ec0d1c86eae8ffd6ed12ef62028
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 1366 h: 74438e93cf484fc6fcf60d6ad2a14086684
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 1366 h: 74438e93cf484fc6fcf60d6ad2a14086684
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 1366 h: 74438e93cf484fc6fcf60d6ad2a14086684
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 1366 h: 74438e93cf484fc6fcf60d6ad2a14086684
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 1366 h: 74438e93cf484fc6fcf60d6ad2a14086684
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 1366 h: 74438e93cf484fc6fcf60d6ad2a14086684
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 1366 h: 74438e93cf484fc6fcf60d6ad2a14086684
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+Ghola will use ocamlopt to recompile
+Config compiled succesfully
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 1366 h: 74438e93cf484fc6fcf60d6ad2a14086684
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+going to run!
+start render
+end render
+creating output
+output width: 1366
+output height: 768
+output x: 0
+output y: 0
+creating window
+creating seat
+manage sequence
+about to fetch window
+got window
+about to fetch window
+got window
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 0 w: 1366 h: 768
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 0 w: 1366 h: 76838e93cf484fc6fcf60d6ad2a14086684
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+got new exclusive area
+rect = x: 0 y: 24 w: 1366 h: 744manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 1366 h: 74438e93cf484fc6fcf60d6ad2a14086684
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 1366 h: 74438e93cf484fc6fcf60d6ad2a14086684
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 1366 h: 74438e93cf484fc6fcf60d6ad2a14086684
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+creating window
+manage sequence
+about to fetch window
+got window
+about to fetch window
+got window
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 744da01a264611cf1798566c84ff8494d77
+rect = x: 683 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 744da01a264611cf1798566c84ff8494d77
+rect = x: 683 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 744da01a264611cf1798566c84ff8494d77
+rect = x: 683 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 744da01a264611cf1798566c84ff8494d77
+rect = x: 683 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 744da01a264611cf1798566c84ff8494d77
+rect = x: 683 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 744da01a264611cf1798566c84ff8494d77
+rect = x: 683 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 744da01a264611cf1798566c84ff8494d77
+rect = x: 683 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 744da01a264611cf1798566c84ff8494d77
+rect = x: 683 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 744da01a264611cf1798566c84ff8494d77
+rect = x: 683 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 744da01a264611cf1798566c84ff8494d77
+rect = x: 683 y: 24 w: 683 h: 74438e93cf484fc6fcf60d6ad2a14086684
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+creating window
+manage sequence
+about to fetch window
+got window
+about to fetch window
+got window
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 7446a32482280686bc3487a3b6cccea218d
+rect = x: 683 y: 24 w: 683 h: 372da01a264611cf1798566c84ff8494d77
+rect = x: 683 y: 396 w: 683 h: 37238e93cf484fc6fcf60d6ad2a14086684
+about to fetch window
+got window
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 7446a32482280686bc3487a3b6cccea218d
+rect = x: 683 y: 24 w: 683 h: 372da01a264611cf1798566c84ff8494d77
+rect = x: 683 y: 396 w: 683 h: 37238e93cf484fc6fcf60d6ad2a14086684
+about to fetch window
+got window
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 7446a32482280686bc3487a3b6cccea218d
+rect = x: 683 y: 24 w: 683 h: 372da01a264611cf1798566c84ff8494d77
+rect = x: 683 y: 396 w: 683 h: 37238e93cf484fc6fcf60d6ad2a14086684
+about to fetch window
+got window
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 7446a32482280686bc3487a3b6cccea218d
+rect = x: 683 y: 24 w: 683 h: 372da01a264611cf1798566c84ff8494d77
+rect = x: 683 y: 396 w: 683 h: 37238e93cf484fc6fcf60d6ad2a14086684
+about to fetch window
+got window
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 7446a32482280686bc3487a3b6cccea218d
+rect = x: 683 y: 24 w: 683 h: 372da01a264611cf1798566c84ff8494d77
+rect = x: 683 y: 396 w: 683 h: 37238e93cf484fc6fcf60d6ad2a14086684
+about to fetch window
+got window
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 7446a32482280686bc3487a3b6cccea218d
+rect = x: 683 y: 24 w: 683 h: 372da01a264611cf1798566c84ff8494d77
+rect = x: 683 y: 396 w: 683 h: 37238e93cf484fc6fcf60d6ad2a14086684
+about to fetch window
+got window
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 7446a32482280686bc3487a3b6cccea218d
+rect = x: 683 y: 24 w: 683 h: 372da01a264611cf1798566c84ff8494d77
+rect = x: 683 y: 396 w: 683 h: 37238e93cf484fc6fcf60d6ad2a14086684
+about to fetch window
+got window
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 7446a32482280686bc3487a3b6cccea218d
+rect = x: 683 y: 24 w: 683 h: 372da01a264611cf1798566c84ff8494d77
+rect = x: 683 y: 396 w: 683 h: 37238e93cf484fc6fcf60d6ad2a14086684
+about to fetch window
+got window
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 7446a32482280686bc3487a3b6cccea218d
+rect = x: 683 y: 24 w: 683 h: 372da01a264611cf1798566c84ff8494d77
+rect = x: 683 y: 396 w: 683 h: 37238e93cf484fc6fcf60d6ad2a14086684
+about to fetch window
+got window
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 7446a32482280686bc3487a3b6cccea218d
+rect = x: 683 y: 24 w: 683 h: 372da01a264611cf1798566c84ff8494d77
+rect = x: 683 y: 396 w: 683 h: 37238e93cf484fc6fcf60d6ad2a14086684
+about to fetch window
+got window
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 7446a32482280686bc3487a3b6cccea218d
+rect = x: 683 y: 24 w: 683 h: 372da01a264611cf1798566c84ff8494d77
+rect = x: 683 y: 396 w: 683 h: 37238e93cf484fc6fcf60d6ad2a14086684
+about to fetch window
+got window
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 7446a32482280686bc3487a3b6cccea218d
+rect = x: 683 y: 24 w: 683 h: 372da01a264611cf1798566c84ff8494d77
+rect = x: 683 y: 396 w: 683 h: 37238e93cf484fc6fcf60d6ad2a14086684
+about to fetch window
+got window
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 7446a32482280686bc3487a3b6cccea218d
+rect = x: 683 y: 24 w: 683 h: 372da01a264611cf1798566c84ff8494d77
+rect = x: 683 y: 396 w: 683 h: 37238e93cf484fc6fcf60d6ad2a14086684
+about to fetch window
+got window
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 7446a32482280686bc3487a3b6cccea218d
+rect = x: 683 y: 24 w: 683 h: 372da01a264611cf1798566c84ff8494d77
+rect = x: 683 y: 396 w: 683 h: 37238e93cf484fc6fcf60d6ad2a14086684
+about to fetch window
+got window
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 7446a32482280686bc3487a3b6cccea218d
+rect = x: 683 y: 24 w: 683 h: 372da01a264611cf1798566c84ff8494d77
+rect = x: 683 y: 396 w: 683 h: 37238e93cf484fc6fcf60d6ad2a14086684
+about to fetch window
+got window
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 7446a32482280686bc3487a3b6cccea218d
+rect = x: 683 y: 24 w: 683 h: 372da01a264611cf1798566c84ff8494d77
+rect = x: 683 y: 396 w: 683 h: 37238e93cf484fc6fcf60d6ad2a14086684
+about to fetch window
+got window
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+about to fetch window
+got window
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 7446a32482280686bc3487a3b6cccea218d
+rect = x: 683 y: 24 w: 683 h: 372da01a264611cf1798566c84ff8494d77
+rect = x: 683 y: 396 w: 683 h: 37238e93cf484fc6fcf60d6ad2a14086684
+about to fetch window
+got window
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 7446a32482280686bc3487a3b6cccea218d
+rect = x: 683 y: 24 w: 683 h: 744da01a264611cf1798566c84ff8494d77
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 7446a32482280686bc3487a3b6cccea218d
+rect = x: 683 y: 24 w: 683 h: 744da01a264611cf1798566c84ff8494d77
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 7446a32482280686bc3487a3b6cccea218d
+rect = x: 683 y: 24 w: 683 h: 744da01a264611cf1798566c84ff8494d77
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+about to fetch window
+got window
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 683 h: 7446a32482280686bc3487a3b6cccea218d
+rect = x: 683 y: 24 w: 683 h: 744da01a264611cf1798566c84ff8494d77
+about to fetch window
+got window
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 1366 h: 7446a32482280686bc3487a3b6cccea218d
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 1366 h: 7446a32482280686bc3487a3b6cccea218d
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 1366 h: 7446a32482280686bc3487a3b6cccea218d
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+about to fetch window
+got window
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 1366 h: 7446a32482280686bc3487a3b6cccea218d
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+rect = x: 0 y: 24 w: 1366 h: 7446a32482280686bc3487a3b6cccea218d
+about to fetch window
+got window
+placed
+hid others
+about to fetch window
+got window
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+placed
+hid others
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+placed
+hid others
+focused
+about to fetch output
+got output
+set default output
+start render
+end render
+manage sequence
+ran queue
+applied resizes
+about to fetch output
+got output
+output: 59 rect = x: 0 y: 24 w: 1366 h: 744
+about to fetch output
+got output
+arranged
+placed
+hid others
+focused
+about to fetch output
+got output
+set default output

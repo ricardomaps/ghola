@@ -132,7 +132,19 @@ let lookup_workspace output window_set =
 ;;
 
 let tag_mem tag window_set =
-  workspaces window_set |> List.exists (fun workspace -> String.equal tag workspace.tag)
+  workspaces window_set
+  |> List.map (fun workspace -> workspace.tag)
+  |> List.mem ~eq:String.equal tag
+;;
+
+let window_mem window_id window_set =
+  all_windows window_set |> List.mem ~eq:String.equal window_id
+;;
+
+let output_mem name window_set =
+  window_set.visible
+  |> List.map (fun screen -> screen.output)
+  |> List.mem ~eq:Int32.equal name
 ;;
 
 let map_workspaces f window_set =

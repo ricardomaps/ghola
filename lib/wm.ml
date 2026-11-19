@@ -9,6 +9,7 @@ type t =
   ; layer_shell_proxy : [ `V1 ] River_layer_shell.t
   ; queue : (unit -> unit) Queue.t
   ; env : Eio_unix.Stdenv.base
+  ; mutable restart : bool
   ; mutable window_set : layout Window_set.t
   ; mutable seats : Seat.t list
   ; mutable windows : Window.t StringMap.t
@@ -24,13 +25,19 @@ module type GholaLayout = sig
 end
 
 let get_window window_id wm =
-  StringMap.get window_id wm.windows
-  |> Option.get_exn_or ("No window under identifier " ^ window_id)
+  let window =
+    StringMap.get window_id wm.windows
+    |> Option.get_exn_or ("No window under identifier " ^ window_id)
+  in
+  window
 ;;
 
 let get_output output_name wm =
-  Int32Map.get output_name wm.outputs
-  |> Option.get_exn_or ("No output under name " ^ Int32.to_string output_name)
+  let output =
+    Int32Map.get output_name wm.outputs
+    |> Option.get_exn_or ("No output under name " ^ Int32.to_string output_name)
+  in
+  output
 ;;
 
 let add_window id window wm = wm.windows <- StringMap.add id window wm.windows
@@ -122,13 +129,13 @@ let send_message message wm =
 ;;
 
 let broadcast_message message wm =
-  Window_set.map_workspaces
-    (fun workspace ->
+  windows
+    (Window_set.map_workspaces (fun workspace ->
        let (Layout ((module L), layout)) = workspace.layout in
        match L.handle_message wm layout message with
        | None -> workspace
-       | Some layout -> { workspace with layout = Layout ((module L), layout) })
-    wm.window_set
+       | Some layout -> { workspace with layout = Layout ((module L), layout) }))
+    wm
 ;;
 
 let set_layout layout wm =
@@ -139,6 +146,56 @@ let set_layout layout wm =
           ignore @@ L.handle_message wm l Message.ReleaseResources;
           { current with layout })
        wm.window_set
+;;
+
+let write_state window_set =
+  let yojson_of_layout (Layout ((module L), l)) = L.yojson_of_t l in
+  Window_set.yojson_of_t yojson_of_layout window_set
+  |> Yojson.Safe.to_file Directories.state_file_name
+;;
+
+let read_state layout =
+  let layout_of_yojson json =
+    let (Layout ((module L), _)) = layout in
+    try Layout ((module L), L.t_of_yojson json) with
+    | _ -> layout
+  in
+  let state =
+    Yojson.Safe.from_file Directories.state_file_name
+    |> Window_set.t_of_yojson layout_of_yojson
+  in
+  Unix.unlink Directories.state_file_name;
+  state
+;;
+
+let restart wm =
+  let success = Compile.recompile ~force:true wm.env#process_mgr ~fs:wm.env#fs in
+  if success
+  then (
+    try
+      write_state wm.window_set;
+      wm.restart <- true;
+      River_window_manager.stop wm.window_manager_proxy
+    with
+    | _ -> prerr_endline "Could not write state file, aborting restart")
+  else prerr_endline "Could not compile configuration, aborting restart"
+;;
+
+let remove_dropped wm =
+  let removed_windows =
+    Window_set.all_windows wm.window_set
+    |> List.filter (fun id -> not @@ StringMap.mem id wm.windows)
+  in
+  let removed_outputs =
+    wm.window_set.visible
+    |> List.map (fun (screen : _ Window_set.screen) -> screen.output)
+    |> List.filter (fun name -> not @@ Int32Map.mem name wm.outputs)
+  in
+  let ws =
+    List.fold_left (Fun.flip Window_set.remove_window) wm.window_set removed_windows
+  in
+  let ws = List.fold_left (Fun.flip Window_set.remove_screen) ws removed_outputs in
+  wm.window_set <- ws
 ;;
 
 let seat wm = List.hd wm.seats
@@ -219,9 +276,7 @@ let floating_placements wm (screen : _ Window_set.screen) =
 let layout_screen wm (screen : _ Window_set.screen) =
   let output = get_output screen.output wm in
   let (Layout ((module L), state)) = screen.workspace.layout in
-  let tiled_stack =
-    Option.bind screen.workspace.stack (Zipper.filter (is_tiled wm))
-  in
+  let tiled_stack = Option.bind screen.workspace.stack (Zipper.filter (is_tiled wm)) in
   let tiled_workspace = { screen.workspace with layout = state; stack = tiled_stack } in
   let tiles, new_state = L.run_layout wm tiled_workspace output.working_geometry in
   let floats = floating_placements wm screen in
@@ -233,7 +288,7 @@ let layout_screen wm (screen : _ Window_set.screen) =
         workspace = { screen.workspace with layout = Layout ((module L), s) }
       }
   in
-  (floats @ tiles), screen
+  floats @ tiles, screen
 ;;
 
 let arrange wm =

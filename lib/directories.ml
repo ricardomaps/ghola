@@ -1,30 +1,16 @@
-let ( / ) = Eio.Path.( / )
+open! Containers
 
-type 'a t =
-  { config : 'a Eio.Path.t
-  ; cache : 'a Eio.Path.t
-  ; data : 'a Eio.Path.t
-  }
+let xdg = Xdg.create ~env:Sys.getenv_opt ()
+let cache_dir = Xdg.cache_dir xdg ^ "/ghola"
+let config_dir = Xdg.config_dir xdg ^ "/ghola"
+let data_dir = Xdg.data_dir xdg ^ "/ghola"
+let err_file_name = data_dir ^ "/ghola.errors"
+let bin_file_name = cache_dir ^ "/ghola-bin"
+let src_file_name = config_dir ^ "/config.ml"
+let state_file_name = data_dir ^ "/ghola.state"
 
-let err_file { data; _ } = data / "ghola.errors"
-let err_file_name dirs = Eio.Path.native_exn @@ err_file dirs
-let bin_file { cache; _ } = cache / "ghola-bin"
-let bin_file_name dirs = Eio.Path.native_exn @@ bin_file dirs
-let lib_file { config; _ } = config / "lib"
-let lib_file_name dirs = Eio.Path.native_exn @@ lib_file dirs
-let src_file { config; _ } = config / "config.ml"
-let src_file_name dirs = Eio.Path.native_exn @@ src_file dirs
-
-let xdg_dirs ~fs =
-  let xdg = Xdg.create ~env:Sys.getenv_opt () in
-  { cache = fs / Xdg.cache_dir xdg / "ghola"
-  ; config = fs / Xdg.config_dir xdg / "ghola"
-  ; data = fs / Xdg.data_dir xdg / "ghola"
-  }
-;;
-
-let get ~fs =
-  let ({ cache; config; data } as dirs) = xdg_dirs ~fs in
-  List.iter (Eio.Path.mkdirs ~exists_ok:true ~perm:0o755) [ cache; config; data ];
-  dirs
+let ensure_exists ~fs =
+  [ cache_dir; config_dir; data_dir ]
+  |> List.map (fun dir -> Eio.Path.(fs / dir))
+  |> List.iter (Eio.Path.mkdirs ~exists_ok:true ~perm:0o755)
 ;;
